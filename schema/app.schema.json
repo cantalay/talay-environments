@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "environment", "namespace", "chartPath", "valuesFile"],
+  "properties": {
+    "name": { "type": "string", "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$" },
+    "environment": { "enum": ["dev", "stage", "prod"] },
+    "namespace": { "type": "string", "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$" },
+    "chartPath": {
+      "enum": [
+        "charts/talay-service",
+        "charts/talay-web",
+        "charts/talay-worker",
+        "charts/talay-cronjob",
+        "charts/talay-job"
+      ]
+    },
+    "valuesFile": { "type": "string", "pattern": "^apps/(dev|stage|prod)/.+/values\\.yaml$" }
+  }
+}

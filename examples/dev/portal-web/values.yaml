@@ -1,0 +1,18 @@
+environment: dev
+image:
+  repository: ghcr.io/example/portal-web
+  tag: sha-replace-me
+runtimeConfig:
+  API_BASE_URL: https://api.dev.cantalay.com
+  OIDC_ISSUER: https://auth.cantalay.com/realms/talay
+  OIDC_CLIENT_ID: talay-web
+ingress:
+  enabled: true
+  hosts:
+    - host: app.dev.cantalay.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: portal-web-dev-tls
+      hosts: [app.dev.cantalay.com]

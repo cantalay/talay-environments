@@ -1,0 +1,36 @@
+environment: dev
+image:
+  repository: ghcr.io/example/catalog-api
+  tag: sha-replace-me
+runtime:
+  type: java
+  java:
+    agent:
+      enabled: true
+probes:
+  startup:
+    path: /actuator/health/readiness
+  readiness:
+    path: /actuator/health/readiness
+  liveness:
+    path: /actuator/health/liveness
+serviceMonitor:
+  enabled: true
+  path: /actuator/prometheus
+config:
+  SPRING_PROFILES_ACTIVE: dev
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql.data.svc.cluster.local:5432/talay
+  SPRING_DATA_REDIS_HOST: redis-master.data.svc.cluster.local
+externalSecret:
+  enabled: true
+  remoteKey: apps/dev/catalog-api
+ingress:
+  enabled: true
+  hosts:
+    - host: api.dev.cantalay.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: catalog-api-dev-tls
+      hosts: [api.dev.cantalay.com]

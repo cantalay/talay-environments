@@ -1,0 +1,5 @@
+name: portal-web
+environment: dev
+namespace: talay-dev
+chartPath: charts/talay-web
+valuesFile: apps/dev/portal-web/values.yaml

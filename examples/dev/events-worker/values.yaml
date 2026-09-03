@@ -1,0 +1,14 @@
+environment: dev
+image:
+  repository: ghcr.io/example/events-worker
+  tag: sha-replace-me
+runtime:
+  type: java
+  java:
+    agent:
+      enabled: true
+config:
+  SPRING_PROFILES_ACTIVE: dev
+externalSecret:
+  enabled: true
+  remoteKey: apps/dev/events-worker

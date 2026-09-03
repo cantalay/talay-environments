@@ -1,0 +1,11 @@
+environment: dev
+schedule: "0 3 * * *"
+timeZone: Europe/Istanbul
+image:
+  repository: ghcr.io/example/maintenance
+  tag: sha-replace-me
+command: ["/app/maintenance"]
+args: ["cleanup"]
+externalSecret:
+  enabled: true
+  remoteKey: apps/dev/maintenance

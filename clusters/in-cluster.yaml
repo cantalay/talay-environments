@@ -1,0 +1,6 @@
+name: in-cluster
+server: https://kubernetes.default.svc
+environments:
+  - dev
+  - stage
+  - prod
