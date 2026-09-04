@@ -12,3 +12,9 @@ Yeni uygulama ekleme:
 `apps/*/*/app.yaml` dosyaları aktif deploy edilir. `examples/` hiçbir zaman ApplicationSet tarafından okunmaz; bu nedenle placeholder image/domain yanlışlıkla cluster'a gitmez.
 
 Image tag olarak `latest` kullanmayın. CI image digest veya immutable `sha-<commit>` tag'ını bu repoya PR ile yazmalıdır. Prod değişiklikleri branch protection, zorunlu review ve environment approval ile korunmalıdır.
+
+## Todogi migration preparation
+
+`examples/prod/todogi-backend` ve `examples/prod/todogi-web`, mevcut cluster'dan çıkarılan image, domain, port, Vault key ve health endpoint sözleşmesini taşır. `examples/` aktif deploy edilmez. Mevcut Todogi container'ları root çalıştığı için özellikle web image non-root kullanıcı, salt-okunur filesystem ve `8080` portuyla yeniden build edilmeden örnekler `apps/` altına taşınmamalıdır.
+
+Todogi cutover öncesinde ayrıca `todogi.singlestranger.com`, `www.todogi.singlestranger.com`, `api.singlestranger.com` ve `www.api.singlestranger.com` DNS kayıtları yeni Traefik adresine yönlendirilmeli; PostgreSQL `todogi` schema/verisi ayrı bir backup/restore akışıyla taşınmalıdır.

@@ -1,0 +1,5 @@
+name: todogi
+environment: prod
+namespace: todogi-app
+chartPath: charts/talay-web
+valuesFile: apps/prod/todogi-web/values.yaml
