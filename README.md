@@ -15,6 +15,6 @@ Image tag olarak `latest` kullanmayın. CI image digest veya immutable `sha-<com
 
 ## Todogi migration preparation
 
-`examples/prod/todogi-backend` ve `examples/prod/todogi-web`, mevcut cluster'dan çıkarılan image, domain, port, Vault key ve health endpoint sözleşmesini taşır. `examples/` aktif deploy edilmez. Mevcut Todogi container'ları root çalıştığı için özellikle web image non-root kullanıcı, salt-okunur filesystem ve `8080` portuyla yeniden build edilmeden örnekler `apps/` altına taşınmamalıdır.
+`examples/prod/todogi-backend` ve `examples/prod/todogi-web`, mevcut cluster'dan çıkarılan image, domain, port, Vault key ve health endpoint sözleşmesini taşır. Backend yeni topolojiye uyarlanmış `apps/todogi/backend` Vault yolunu kullanır. `examples/` aktif deploy edilmez. Mevcut GHCR image'ları anonim pull'a kapalıdır ve legacy yedekte registry Secret yoktur; bu yüzden namespace-scope `imagePullSecret` sağlanmadan örnekler `apps/` altına taşınmamalıdır. Mevcut Todogi container'ları root çalıştığı için özellikle web image ayrıca non-root kullanıcı, salt-okunur filesystem ve `8080` portuyla yeniden build edilmelidir.
 
 Todogi cutover öncesinde ayrıca `todogi.singlestranger.com`, `www.todogi.singlestranger.com`, `api.singlestranger.com` ve `www.api.singlestranger.com` DNS kayıtları yeni Traefik adresine yönlendirilmeli; PostgreSQL `todogi` schema/verisi ayrı bir backup/restore akışıyla taşınmalıdır.

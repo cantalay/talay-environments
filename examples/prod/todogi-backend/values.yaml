@@ -21,7 +21,7 @@ config:
 
 externalSecret:
   enabled: true
-  remoteKey: todogi/backend
+  remoteKey: apps/todogi/backend
   targetName: todogi-backend-secrets
 
 observability:
