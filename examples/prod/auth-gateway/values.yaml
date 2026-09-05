@@ -3,7 +3,7 @@ environment: prod
 replicaCount: 1
 
 image:
-  repository: ghcr.io/cantalay/auth-gateway
+  repository: ghcr.io/cantalay/todogi-auth-gateway
   tag: "0.0.6"
   pullPolicy: IfNotPresent
 
