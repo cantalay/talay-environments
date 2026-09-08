@@ -1,0 +1,5 @@
+name: auth-gateway
+environment: prod
+namespace: gateway
+chartPath: charts/talay-service
+valuesFile: apps/prod/auth-gateway/values.yaml
