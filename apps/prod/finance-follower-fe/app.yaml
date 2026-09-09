@@ -1,0 +1,5 @@
+name: finance-follower-fe
+environment: prod
+namespace: finance-follower
+chartPath: charts/talay-web
+valuesFile: apps/prod/finance-follower-fe/values.yaml

@@ -22,6 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           git clone --depth 1 https://github.com/cantalay/talay-helm-charts.git "$RUNNER_TEMP/talay-helm-charts"
+          mkdir -p "$RUNNER_TEMP/rendered"
           shopt -s nullglob
           applications=(apps/*/*/app.yaml)
           for application in "${applications[@]}"; do
@@ -32,5 +33,15 @@ jobs:
             test -f "$values_file"
             helm dependency build "$RUNNER_TEMP/talay-helm-charts/$chart_path"
             helm lint --strict "$RUNNER_TEMP/talay-helm-charts/$chart_path" -f "$values_file"
-            helm template "$release" "$RUNNER_TEMP/talay-helm-charts/$chart_path" --namespace "$namespace" -f "$values_file" >/dev/null
+            helm template "$release" "$RUNNER_TEMP/talay-helm-charts/$chart_path" --namespace "$namespace" -f "$values_file" > "$RUNNER_TEMP/rendered/${release}.yaml"
           done
+      - name: Scan rendered Kubernetes resources
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          version: v0.74.0
+          cache-dir: ${{ runner.temp }}/trivy
+          scan-type: config
+          scan-ref: ${{ runner.temp }}/rendered
+          severity: HIGH,CRITICAL
+          format: table
+          exit-code: "1"

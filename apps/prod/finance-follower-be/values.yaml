@@ -1,0 +1,125 @@
+fullnameOverride: finance-follower-be
+environment: prod
+partOf: finance-follower
+replicaCount: 2
+
+image:
+  repository: ghcr.io/cantalay/finance-follower-be
+  tag: sha-b775eb0
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: finance-follower-be-ghcr-pull
+
+runtime:
+  type: java
+  java:
+    agent:
+      enabled: true
+
+containerPort: 8080
+
+config:
+  SPRING_PROFILES_ACTIVE: prod
+  SERVER_PORT: "8080"
+  DEPLOYMENT_ENVIRONMENT: prod
+  APP_CORS_ALLOWED_ORIGINS: https://finance.cantalay.com,https://finance-admin.cantalay.com
+  OIDC_ISSUER_URI: https://auth.cantalay.com/realms/finance-follower
+  OIDC_AUDIENCE: finance-follower-be
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak-keycloakx-http.identity.svc.cluster.local/realms/finance-follower/protocol/openid-connect/certs
+  LOGGING_STRUCTURED_FORMAT_CONSOLE: ecs
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/finance-follower/backend
+  targetName: finance-follower-be-secrets
+
+observability:
+  enabled: true
+  serviceName: finance-follower-be
+  samplingRatio: "0.25"
+
+probes:
+  startup:
+    enabled: true
+    path: /api/actuator/health/readiness
+  readiness:
+    enabled: true
+    path: /api/actuator/health/readiness
+  liveness:
+    enabled: true
+    path: /api/actuator/health/liveness
+
+serviceMonitor:
+  enabled: true
+  path: /api/actuator/prometheus
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 768Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 80
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+networkPolicy:
+  enabled: true
+  allowSameNamespace: false
+  egress:
+    enabled: true
+    rules:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: kube-system
+        ports:
+          - protocol: UDP
+            port: 53
+          - protocol: TCP
+            port: 53
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: data
+        ports:
+          - protocol: TCP
+            port: 5432
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: identity
+        ports:
+          - protocol: TCP
+            port: 80
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: monitoring
+        ports:
+          - protocol: TCP
+            port: 4318
+
+ingress:
+  enabled: true
+  hosts:
+    - host: finance-api.cantalay.com
+      paths:
+        - path: /api/v1
+          pathType: Prefix
+  tls:
+    - secretName: finance-follower-be-tls
+      hosts:
+        - finance-api.cantalay.com
