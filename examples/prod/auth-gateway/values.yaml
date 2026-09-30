@@ -4,7 +4,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-auth-gateway
-  tag: "sha-9c7c7fc"
+  tag: "sha-f92c65a"
   pullPolicy: IfNotPresent
 
 registrySecret:
