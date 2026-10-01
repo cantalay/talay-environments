@@ -1,5 +1,0 @@
-name: events-worker
-environment: dev
-namespace: talay-dev
-chartPath: charts/talay-worker
-valuesFile: apps/dev/events-worker/values.yaml

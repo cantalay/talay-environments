@@ -1,5 +1,0 @@
-name: cleanup
-environment: dev
-namespace: talay-dev
-chartPath: charts/talay-cronjob
-valuesFile: apps/dev/cleanup/values.yaml

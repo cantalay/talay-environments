@@ -1,5 +1,0 @@
-name: catalog-api
-environment: prod
-namespace: talay-prod
-chartPath: charts/talay-service
-valuesFile: apps/prod/catalog-api/values.yaml

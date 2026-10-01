@@ -10,10 +10,7 @@
     "chartPath": {
       "enum": [
         "charts/talay-service",
-        "charts/talay-web",
-        "charts/talay-worker",
-        "charts/talay-cronjob",
-        "charts/talay-job"
+        "charts/talay-web"
       ]
     },
     "valuesFile": { "type": "string", "pattern": "^apps/(dev|stage|prod)/.+/values\\.yaml$" },
