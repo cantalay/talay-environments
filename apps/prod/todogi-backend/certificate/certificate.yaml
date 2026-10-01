@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: todogi-backend-tls
+  labels:
+    app.kubernetes.io/name: todogi-backend
+    app.kubernetes.io/part-of: todogi
+    talay.io/environment: prod
+spec:
+  secretName: todogi-backend-tls
+  dnsNames:
+    - api.singlestranger.com
+    - www.api.singlestranger.com
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt
+  usages:
+    - digital signature
+    - key encipherment

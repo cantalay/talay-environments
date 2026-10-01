@@ -63,20 +63,3 @@ autoscaling:
 
 podDisruptionBudget:
   enabled: false
-
-ingress:
-  enabled: true
-  hosts:
-    - host: api.singlestranger.com
-      paths:
-        - path: /api
-          pathType: Prefix
-    - host: www.api.singlestranger.com
-      paths:
-        - path: /api
-          pathType: Prefix
-  tls:
-    - secretName: todogi-backend-tls
-      hosts:
-        - api.singlestranger.com
-        - www.api.singlestranger.com

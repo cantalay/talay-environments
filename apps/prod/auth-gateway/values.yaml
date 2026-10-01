@@ -64,15 +64,3 @@ autoscaling:
 
 podDisruptionBudget:
   enabled: false
-
-ingress:
-  enabled: true
-  hosts:
-    - host: auth.cantalay.com
-      paths:
-        - path: /auth
-          pathType: Prefix
-  tls:
-    - secretName: auth-gateway-tls
-      hosts:
-        - auth.cantalay.com

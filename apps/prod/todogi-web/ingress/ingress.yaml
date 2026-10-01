@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todogi-expo-app
+  labels:
+    app.kubernetes.io/name: todogi-web
+    app.kubernetes.io/part-of: todogi
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: todogi-app-tls
+      hosts:
+        - todogi.singlestranger.com
+        - www.todogi.singlestranger.com
+  rules:
+    - host: todogi.singlestranger.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todogi-expo-app
+                port:
+                  number: 80
+    - host: www.todogi.singlestranger.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todogi-expo-app
+                port:
+                  number: 80

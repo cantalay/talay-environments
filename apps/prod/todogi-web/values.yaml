@@ -19,25 +19,12 @@ runtimeConfig:
   EXPO_PUBLIC_AUTH_URL: https://auth.cantalay.com
   NODE_ENV: production
 
+nginx:
+  existingConfigMap: todogi-expo-app-nginx
+  configRevision: "1"
+
 autoscaling:
   enabled: false
 
 podDisruptionBudget:
   enabled: false
-
-ingress:
-  enabled: true
-  hosts:
-    - host: todogi.singlestranger.com
-      paths:
-        - path: /
-          pathType: Prefix
-    - host: www.todogi.singlestranger.com
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: todogi-app-tls
-      hosts:
-        - todogi.singlestranger.com
-        - www.todogi.singlestranger.com

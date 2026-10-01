@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auth-gateway
+  labels:
+    app.kubernetes.io/name: auth-gateway
+    app.kubernetes.io/part-of: todogi
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: auth-gateway-tls
+      hosts:
+        - auth.cantalay.com
+  rules:
+    - host: auth.cantalay.com
+      http:
+        paths:
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-gateway
+                port:
+                  number: 80
