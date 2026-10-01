@@ -4,17 +4,17 @@ Argo CD'nin uygulamalar için okuduğu desired-state reposudur. Secret değerler
 
 Yeni uygulama ekleme:
 
-1. `examples/<environment>/<app>` örneğini `apps/<environment>/<app>` altına kopyalayın.
-2. Image repository/tag, domain, namespace ve Vault `remoteKey` değerlerini gerçek değerlerle değiştirin.
-3. `app.yaml` içindeki `valuesFile` yolunu doğrulayın.
+1. `apps/<environment>/<project>/<component>` dizinini oluşturun.
+2. `application.yaml` içinde chart, namespace, values ve manifest yollarını tanımlayın.
+3. Workload ayarlarını `values.yaml`; TLS'i `certificate/`; trafiği `ingress/`; web sunucusunu `nginx/` altında yönetin.
 4. PR review sonrası merge edin; Argo CD prune/self-heal ile uygular.
 
-`apps/*/*/app.yaml` dosyaları aktif deploy edilir. `examples/` hiçbir zaman ApplicationSet tarafından okunmaz; bu nedenle placeholder image/domain yanlışlıkla cluster'a gitmez.
+`apps/*/*/*/application.yaml` dosyaları aktif deploy edilir. Aynı component dizinindeki `kustomization.yaml`, uygulamaya özel Kubernetes kaynaklarını toplar.
 
 Image tag olarak `latest` kullanmayın. CI image digest veya immutable `sha-<commit>` tag'ını bu repoya PR ile yazmalıdır. Prod değişiklikleri branch protection, zorunlu review ve environment approval ile korunmalıdır.
 
-## Todogi migration preparation
+## Todogi
 
-`examples/prod/auth-gateway`, `examples/prod/todogi-backend` ve `examples/prod/todogi-web`; mevcut cluster'dan çıkarılan image, domain, port, Vault key ve health endpoint sözleşmesini taşır. Backend ve gateway yeni topolojiye uyarlanmış `apps/todogi/*` Vault yollarını kullanır. `auth.cantalay.com/auth/*` gateway'e, aynı hosttaki `/realms/*` yolları Keycloak'a gider. Private GHCR erişimi `platform/registry/ghcr` Vault yolundan namespace-scope `ghcr-pull` Secret'ına çevrilir. Üç image non-root üretildikten ve immutable tag/digest değerleri yazıldıktan sonra bu örnekler `apps/` altına taşınır.
+Aktif bileşenler `apps/prod/todogi/{auth-gateway,backend,web}` altındadır. Backend ve gateway `apps/todogi/*` Vault yollarını kullanır. `auth.cantalay.com/auth/*` gateway'e gider. Private GHCR erişimi `platform/registry/ghcr` Vault yolundan namespace-scope `ghcr-pull` Secret'ına çevrilir.
 
-Todogi cutover öncesinde ayrıca `todogi.singlestranger.com`, `www.todogi.singlestranger.com`, `api.singlestranger.com` ve `www.api.singlestranger.com` DNS kayıtları yeni Traefik adresine yönlendirilmelidir. Hedef PostgreSQL'de secret sözleşmesindeki database/role/schema ve gerekli veri geri yüklemesi doğrulanmadan backend aktive edilmemelidir.
+`todogi.singlestranger.com`, `www.todogi.singlestranger.com`, `api.singlestranger.com`, `www.api.singlestranger.com` ve `auth.cantalay.com` Traefik adresine yönlenir. Sertifikalar component dizinlerinde açık `Certificate` kaynakları olarak yönetilir.

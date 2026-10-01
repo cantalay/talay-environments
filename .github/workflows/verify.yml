@@ -23,14 +23,18 @@ jobs:
           set -euo pipefail
           git clone --depth 1 https://github.com/cantalay/talay-helm-charts.git "$RUNNER_TEMP/talay-helm-charts"
           shopt -s nullglob
-          applications=(apps/*/*/app.yaml)
+          applications=(apps/*/*/*/application.yaml)
+          test "${#applications[@]}" -gt 0
           for application in "${applications[@]}"; do
             chart_path="$(ruby -ryaml -e 'puts YAML.safe_load(File.read(ARGV.fetch(0))).fetch("chartPath")' "$application")"
             values_file="$(ruby -ryaml -e 'puts YAML.safe_load(File.read(ARGV.fetch(0))).fetch("valuesFile")' "$application")"
+            manifests_path="$(ruby -ryaml -e 'puts YAML.safe_load(File.read(ARGV.fetch(0))).fetch("manifestsPath")' "$application")"
             namespace="$(ruby -ryaml -e 'puts YAML.safe_load(File.read(ARGV.fetch(0))).fetch("namespace")' "$application")"
             release="$(ruby -ryaml -e 'puts YAML.safe_load(File.read(ARGV.fetch(0))).fetch("name")' "$application")"
             test -f "$values_file"
+            test "$manifests_path" = "$(dirname "$application")"
             helm dependency build "$RUNNER_TEMP/talay-helm-charts/$chart_path"
             helm lint --strict "$RUNNER_TEMP/talay-helm-charts/$chart_path" -f "$values_file"
             helm template "$release" "$RUNNER_TEMP/talay-helm-charts/$chart_path" --namespace "$namespace" -f "$values_file" >/dev/null
+            kubectl kustomize "$manifests_path" >/dev/null
           done
