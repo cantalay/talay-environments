@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["name", "environment", "namespace", "chartPath", "valuesFile"],
+  "required": ["name", "environment", "namespace", "chartPath", "valuesFile", "manifestsPath"],
   "properties": {
     "name": { "type": "string", "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$" },
     "environment": { "enum": ["dev", "stage", "prod"] },
@@ -16,6 +16,7 @@
         "charts/talay-job"
       ]
     },
-    "valuesFile": { "type": "string", "pattern": "^apps/(dev|stage|prod)/.+/values\\.yaml$" }
+    "valuesFile": { "type": "string", "pattern": "^apps/(dev|stage|prod)/.+/values\\.yaml$" },
+    "manifestsPath": { "type": "string", "pattern": "^apps/(dev|stage|prod)/.+$" }
   }
 }

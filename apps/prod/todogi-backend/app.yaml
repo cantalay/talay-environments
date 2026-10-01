@@ -3,3 +3,4 @@ environment: prod
 namespace: todogi-be
 chartPath: charts/talay-service
 valuesFile: apps/prod/todogi-backend/values.yaml
+manifestsPath: apps/prod/todogi-backend
