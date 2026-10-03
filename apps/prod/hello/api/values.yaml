@@ -1,0 +1,71 @@
+fullnameOverride: hello-api
+environment: prod
+partOf: hello
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/talay-hello-api
+  tag: "sha-f4f9bac"
+  digest: "sha256:182d29173a192b0d9f16854fbafee1ced97c8cca8ce2432ca7a3fe75d23542e9"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+runtime:
+  type: node
+  node:
+    autoInstrumentation:
+      enabled: true
+
+containerPort: 8080
+
+config:
+  NODE_ENV: production
+  PORT: "8080"
+  KEYCLOAK_ISSUER_URL: https://auth.cantalay.com/realms/hello
+  KEYCLOAK_AUDIENCE: hello-api
+  CORS_ORIGINS: https://hello.cantalay.com
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/hello/api
+  targetName: hello-api-secrets
+
+observability:
+  enabled: true
+  serviceName: hello-api
+  samplingRatio: "1.0"
+
+probes:
+  startup:
+    enabled: true
+    path: /health/startup
+    failureThreshold: 30
+    periodSeconds: 5
+  readiness:
+    enabled: true
+    path: /health/ready
+  liveness:
+    enabled: true
+    path: /health/live
+
+serviceMonitor:
+  enabled: true
+  path: /metrics
+  interval: 30s
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

@@ -1,0 +1,6 @@
+name: hello-web
+environment: prod
+namespace: hello-web
+chartPath: charts/talay-web
+valuesFile: apps/prod/hello/web/values.yaml
+manifestsPath: apps/prod/hello/web

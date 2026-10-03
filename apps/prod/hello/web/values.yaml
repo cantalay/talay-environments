@@ -1,0 +1,44 @@
+fullnameOverride: hello-web
+environment: prod
+partOf: hello
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/talay-hello-web
+  tag: "sha-f4f9bac"
+  digest: "sha256:3ccf7ac3798de20afeb6d195795f61da389d5b06c4216b0b23e06ced5afdc31d"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+containerPort: 8080
+
+runtimeConfig:
+  API_URL: https://api.hello.cantalay.com
+  AUTH_URL: https://auth.cantalay.com
+  AUTH_REALM: hello
+  AUTH_CLIENT_ID: hello-web
+
+nginx:
+  existingConfigMap: hello-web-nginx
+  configRevision: "1"
+
+networkPolicy:
+  enabled: true
+  denyEgress: true
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 96Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
