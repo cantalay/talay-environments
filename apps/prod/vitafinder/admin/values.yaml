@@ -1,0 +1,39 @@
+fullnameOverride: vitafinder-admin
+environment: prod
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/vitafinder-web
+  tag: "sha-0ead2d9"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+containerPort: 8080
+webRoot: /usr/share/nginx/html/admin
+
+runtimeConfig:
+  KEYCLOAK_URL: https://auth.cantalay.com
+  KEYCLOAK_REALM: vitafinder
+  KEYCLOAK_CLIENT_ID: vitafinder-admin
+
+nginx:
+  existingConfigMap: vitafinder-admin-nginx
+  configRevision: "1"
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 32Mi
+  limits:
+    cpu: 250m
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

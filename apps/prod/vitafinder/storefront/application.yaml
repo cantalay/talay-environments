@@ -1,0 +1,6 @@
+name: vitafinder-storefront
+environment: prod
+namespace: vitafinder
+chartPath: charts/talay-web
+valuesFile: apps/prod/vitafinder/storefront/values.yaml
+manifestsPath: apps/prod/vitafinder/storefront

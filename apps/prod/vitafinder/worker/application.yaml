@@ -1,0 +1,6 @@
+name: vitafinder-worker
+environment: prod
+namespace: vitafinder
+chartPath: charts/talay-service
+valuesFile: apps/prod/vitafinder/worker/values.yaml
+manifestsPath: apps/prod/vitafinder/worker

@@ -1,0 +1,68 @@
+fullnameOverride: vitafinder-worker
+environment: prod
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/vitafinder-core
+  tag: "sha-4eff081"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+runtime:
+  type: node
+  node:
+    autoInstrumentation:
+      enabled: true
+    nodeOptions: "--enable-source-maps"
+
+containerPort: 3001
+
+config:
+  NODE_ENV: production
+  NODE_PATH: /app/apps/worker/node_modules
+  OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
+  PORT: "3001"
+  VITAFINDER_PROCESS_TYPE: worker
+
+externalSecret:
+  enabled: false
+
+observability:
+  enabled: true
+  serviceName: vitafinder-worker
+  otlpEndpoint: http://otel-collector.monitoring.svc.cluster.local:4318
+  otlpProtocol: http/protobuf
+  samplingRatio: "0.25"
+
+probes:
+  startup:
+    enabled: true
+    path: /health/startup
+  readiness:
+    enabled: true
+    path: /health/ready
+  liveness:
+    enabled: true
+    path: /health/live
+
+serviceMonitor:
+  enabled: true
+  path: /metrics
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
