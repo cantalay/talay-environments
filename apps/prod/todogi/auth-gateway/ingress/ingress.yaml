@@ -6,6 +6,8 @@ metadata:
     app.kubernetes.io/name: auth-gateway
     app.kubernetes.io/part-of: todogi
     talay.io/environment: prod
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: gateway-auth-gateway-ratelimit@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:

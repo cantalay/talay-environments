@@ -1,0 +1,17 @@
+# auth-gateway login/kayıt uçlarına IP başına hız sınırı (parola deneme saldırılarına karşı).
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: auth-gateway-ratelimit
+  labels:
+    app.kubernetes.io/name: auth-gateway
+    app.kubernetes.io/part-of: todogi
+    talay.io/environment: prod
+spec:
+  rateLimit:
+    average: 60
+    period: 1m
+    burst: 30
+    sourceCriterion:
+      ipStrategy:
+        depth: 0

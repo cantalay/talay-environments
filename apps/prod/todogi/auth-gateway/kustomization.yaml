@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - certificate/certificate.yaml
   - ingress/ingress.yaml
+  - middleware/ratelimit.yaml
