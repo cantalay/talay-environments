@@ -31,6 +31,11 @@ config:
   KEYCLOAK_AUDIENCE: vitafinder-api
   CORS_ORIGINS: https://vitafinder.cantalay.com,https://admin.vitafinder.cantalay.com
 
+externalSecret:
+  enabled: true
+  remoteKey: apps/vitafinder/api
+  targetName: vitafinder-api-secrets
+
 observability:
   enabled: true
   serviceName: vitafinder-api

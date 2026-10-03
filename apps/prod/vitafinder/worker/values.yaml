@@ -28,6 +28,11 @@ config:
   NODE_PATH: /app/apps/worker/node_modules
   VITAFINDER_PROCESS_TYPE: worker
 
+externalSecret:
+  enabled: true
+  remoteKey: apps/vitafinder/worker
+  targetName: vitafinder-worker-secrets
+
 observability:
   enabled: true
   serviceName: vitafinder-worker
