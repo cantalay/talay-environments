@@ -4,7 +4,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-app
-  tag: "sha-430e75a"
+  tag: "sha-7170121"
+  digest: "sha256:27cedb0093e43c5327f71992b7599c6f8033c3c579f50be565a0679f0a9a3290"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -17,6 +18,7 @@ containerPort: 8080
 runtimeConfig:
   EXPO_PUBLIC_API_URL: https://api.singlestranger.com
   EXPO_PUBLIC_AUTH_URL: https://auth.cantalay.com
+  EXPO_PUBLIC_AUTH_REALM: todogi
   NODE_ENV: production
 
 nginx:

@@ -5,8 +5,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/talay-hello-web
-  tag: "sha-f4f9bac"
-  digest: "sha256:3ccf7ac3798de20afeb6d195795f61da389d5b06c4216b0b23e06ced5afdc31d"
+  tag: "sha-1472f96"
+  digest: "sha256:c4944c482799688da302c0abe2ceecee127e9779d013cf555d6e744a4943ee60"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -20,7 +20,6 @@ runtimeConfig:
   API_URL: https://api.hello.cantalay.com
   AUTH_URL: https://auth.cantalay.com
   AUTH_REALM: hello
-  AUTH_CLIENT_ID: hello-web
 
 nginx:
   existingConfigMap: hello-web-nginx
