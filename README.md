@@ -18,3 +18,7 @@ Image tag olarak `latest` kullanmayın. CI image digest veya immutable `sha-<com
 Aktif bileşenler `apps/prod/todogi/{auth-gateway,backend,web}` altındadır. Backend ve gateway `apps/todogi/*` Vault yollarını kullanır. `auth.cantalay.com/auth/*` gateway'e gider. Private GHCR erişimi `platform/registry/ghcr` Vault yolundan namespace-scope `ghcr-pull` Secret'ına çevrilir.
 
 `todogi.singlestranger.com`, `www.todogi.singlestranger.com`, `api.singlestranger.com`, `www.api.singlestranger.com` ve `auth.cantalay.com` Traefik adresine yönlenir. Sertifikalar component dizinlerinde açık `Certificate` kaynakları olarak yönetilir.
+
+## VitaFinder
+
+VitaFinder `apps/prod/vitafinder/{storefront,admin,api,worker}` bileşenlerinden oluşur. Storefront ve admin aynı immutable web image'inin ayrı dizinlerini sunar; API ve worker aynı core image'ini farklı process tipiyle çalıştırır. Public adresler `vitafinder.cantalay.com`, `admin.vitafinder.cantalay.com` ve `api.vitafinder.cantalay.com` olarak Traefik adresine yönlenir. Kimlik doğrulama `auth.cantalay.com/realms/vitafinder` üzerinden yapılır.

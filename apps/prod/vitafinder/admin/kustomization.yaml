@@ -1,6 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources: []
+resources:
+  - certificate/certificate.yaml
+  - ingress/ingress.yaml
 
 configMapGenerator:
   - name: vitafinder-admin-nginx
@@ -11,5 +13,5 @@ generatorOptions:
   disableNameSuffixHash: true
   labels:
     app.kubernetes.io/name: vitafinder-admin
-    app.kubernetes.io/part-of: vitafinder
+    app.kubernetes.io/part-of: vita-finder
     talay.io/environment: prod

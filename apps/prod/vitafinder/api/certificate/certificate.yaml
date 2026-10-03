@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vitafinder-api-tls
+  labels:
+    app.kubernetes.io/name: vitafinder-api
+    app.kubernetes.io/part-of: vita-finder
+    talay.io/environment: prod
+spec:
+  secretName: vitafinder-api-tls
+  dnsNames:
+    - api.vitafinder.cantalay.com
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt
+  usages:
+    - digital signature
+    - key encipherment

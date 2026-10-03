@@ -1,6 +1,6 @@
 name: vitafinder-admin
 environment: prod
-namespace: vitafinder
+namespace: vitafinder-admin
 chartPath: charts/talay-web
 valuesFile: apps/prod/vitafinder/admin/values.yaml
 manifestsPath: apps/prod/vitafinder/admin

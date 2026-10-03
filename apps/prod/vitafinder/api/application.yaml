@@ -1,6 +1,6 @@
 name: vitafinder-api
 environment: prod
-namespace: vitafinder
+namespace: vitafinder-api
 chartPath: charts/talay-service
 valuesFile: apps/prod/vitafinder/api/values.yaml
 manifestsPath: apps/prod/vitafinder/api

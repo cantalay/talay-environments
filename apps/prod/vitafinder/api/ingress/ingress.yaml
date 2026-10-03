@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vitafinder-api
+  labels:
+    app.kubernetes.io/name: vitafinder-api
+    app.kubernetes.io/part-of: vita-finder
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: vitafinder-api-tls
+      hosts:
+        - api.vitafinder.cantalay.com
+  rules:
+    - host: api.vitafinder.cantalay.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vitafinder-api
+                port:
+                  number: 80
