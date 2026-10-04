@@ -1,6 +1,0 @@
-name: hello-api
-environment: prod
-namespace: hello-api
-chartPath: charts/talay-service
-valuesFile: apps/prod/hello/api/values.yaml
-manifestsPath: apps/prod/hello/api
