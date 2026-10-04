@@ -43,9 +43,12 @@ observability:
   samplingRatio: "0.25"
 
 probes:
+  # JVM açılışı CPU steal altında dakikalar sürebiliyor; 150 sn'lik varsayılan restart döngüsüne sokuyordu.
   startup:
     enabled: true
     path: /actuator/health
+    timeoutSeconds: 10
+    failureThreshold: 120
   readiness:
     enabled: true
     path: /actuator/health
