@@ -26,7 +26,7 @@ runtimeConfig:
 
 nginx:
   existingConfigMap: vitafinder-admin-nginx
-  configRevision: "2"
+  configRevision: "3"
 
 resources:
   requests:
