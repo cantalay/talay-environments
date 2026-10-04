@@ -5,8 +5,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/vitafinder-web
-  tag: "sha-0ead2d9"
-  digest: "sha256:3de5e25f342225b214e64c02c961c2119e704ea1c70f5c036c0e76ccf0f21ee7"
+  tag: "sha-a5f4662"
+  digest: "sha256:30a4d32cf58a58a688e69086d75ac09da96cb3957df7a2c37bd3304b4ba4b6fd"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -18,14 +18,15 @@ containerPort: 8080
 webRoot: /usr/share/nginx/html/admin
 
 runtimeConfig:
-  API_BASE_URL: https://api.vitafinder.cantalay.com
-  KEYCLOAK_URL: https://auth.cantalay.com
-  KEYCLOAK_REALM: vitafinder
-  KEYCLOAK_CLIENT_ID: vitafinder-admin
+  API_URL: https://api.vitafinder.cantalay.com
+  AUTH_URL: https://auth.cantalay.com
+  AUTH_REALM: vitafinder
+  WEB_URL: https://vitafinder.cantalay.com
+  ADMIN_URL: https://admin.vitafinder.cantalay.com
 
 nginx:
   existingConfigMap: vitafinder-admin-nginx
-  configRevision: "1"
+  configRevision: "2"
 
 resources:
   requests:

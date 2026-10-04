@@ -5,8 +5,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/vitafinder-core
-  tag: "sha-4eff081"
-  digest: "sha256:4eb2f7825e738bede38ace83e288f9813472a7f141592d96331676a3c82723d4"
+  tag: "sha-a64b2e1"
+  digest: "sha256:35dd47dbcf5466503e466168ef434941063f02f6bb967ec5930086bc0c7e543e"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -20,16 +20,21 @@ runtime:
     autoInstrumentation:
       enabled: true
 
-containerPort: 3000
+containerPort: 8080
 
 config:
   NODE_ENV: production
-  PORT: "3000"
-  NODE_PATH: /app/apps/api/node_modules
+  PORT: "8080"
+  PUBLIC_API_URL: https://api.vitafinder.cantalay.com
+  PUBLIC_WEB_URL: https://vitafinder.cantalay.com
+  PUBLIC_ADMIN_URL: https://admin.vitafinder.cantalay.com
+  # cloud metadata detectors (gcp/aws) only add startup noise on this host
+  OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
   VITAFINDER_PROCESS_TYPE: api
   KEYCLOAK_ISSUER_URL: https://auth.cantalay.com/realms/vitafinder
   KEYCLOAK_AUDIENCE: vitafinder-api
   CORS_ORIGINS: https://vitafinder.cantalay.com,https://admin.vitafinder.cantalay.com
+  DB_POOL_MAX: "6"
 
 externalSecret:
   enabled: true
@@ -45,7 +50,7 @@ probes:
   startup:
     enabled: true
     path: /health/startup
-    failureThreshold: 30
+    failureThreshold: 60
     periodSeconds: 5
   readiness:
     enabled: true
@@ -65,10 +70,10 @@ serviceMonitor:
 
 resources:
   requests:
-    cpu: 25m
-    memory: 128Mi
+    cpu: 50m
+    memory: 192Mi
   limits:
-    memory: 384Mi
+    memory: 512Mi
 
 autoscaling:
   enabled: false
