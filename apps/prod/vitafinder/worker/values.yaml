@@ -32,7 +32,8 @@ config:
   OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
   VITAFINDER_PROCESS_TYPE: worker
   KEYCLOAK_ISSUER_URL: https://auth.cantalay.com/realms/vitafinder
-  CRAWL_GLOBAL_CONCURRENCY: "4"
+  # Hostinger CPU kısıtı altında geçici olarak 1; yeni sunucuya taşınınca 4'e dön.
+  CRAWL_GLOBAL_CONCURRENCY: "1"
   DB_POOL_MAX: "6"
 
 externalSecret:
