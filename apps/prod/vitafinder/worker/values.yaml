@@ -32,7 +32,7 @@ config:
   OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
   VITAFINDER_PROCESS_TYPE: worker
   KEYCLOAK_ISSUER_URL: https://auth.cantalay.com/realms/vitafinder
-  # Hostinger CPU kısıtı altında geçici olarak 1; yeni sunucuya taşınınca 4'e dön.
+  # Toplam eşzamanlı sayfa; aktif sağlayıcı sayısından büyük tutulur. Asıl sınır site başına rps (provider ayarı).
   CRAWL_GLOBAL_CONCURRENCY: "24"
   DB_POOL_MAX: "12"
 
