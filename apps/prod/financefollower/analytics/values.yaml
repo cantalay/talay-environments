@@ -1,0 +1,73 @@
+fullnameOverride: financefollower-analytics
+environment: prod
+partOf: financefollower
+replicaCount: 1                 # zamanlanmış işler ve komut tüketicisi tek replika varsayar
+
+image:
+  repository: ghcr.io/cantalay/finance-follower-analytics
+  tag: "sha-2d7e890"
+  digest: "sha256:74c7f9e4cb02abce847c492d1d8af72f45a010760463a16c06a9e8a0a9582647"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+# Python: chart OTel enjekte etmez; imaj opentelemetry-instrument ile başlar ve chart'ın OTEL_* env'lerini kullanır.
+runtime:
+  type: other
+
+containerPort: 8080
+
+config:
+  PORT: "8080"
+  DEPLOYMENT_ENVIRONMENT: prod
+  REDIS_KEY_PREFIX: "financefollower:"
+  SCHEDULER_ENABLED: "true"
+  QUOTE_INTERVAL_SECONDS: "120"
+  BARS_INTERVAL_MINUTES: "30"
+  BACKFILL_YEARS: "3"
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/financefollower/analytics
+  targetName: financefollower-analytics-secrets
+
+observability:
+  enabled: true
+  serviceName: financefollower-analytics
+  samplingRatio: "0.1"
+
+probes:
+  startup:
+    enabled: true
+    path: /health/startup
+    failureThreshold: 30
+    periodSeconds: 5
+  readiness:
+    enabled: true
+    path: /health/ready
+    periodSeconds: 15
+  liveness:
+    enabled: true
+    path: /health/live
+    periodSeconds: 20
+
+serviceMonitor:
+  enabled: true
+  path: /metrics
+  interval: 60s
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 384Mi
+  limits:
+    memory: 1Gi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

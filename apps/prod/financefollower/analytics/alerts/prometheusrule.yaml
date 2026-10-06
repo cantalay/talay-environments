@@ -1,0 +1,28 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: financefollower-analytics-alerts
+  labels:
+    app.kubernetes.io/name: financefollower-analytics
+    app.kubernetes.io/part-of: financefollower
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: financefollower-analytics
+      rules:
+        - alert: TalayAppDown
+          expr: sum(up{namespace="financefollower-analytics"}) == 0
+          for: 5m
+          labels: { severity: critical, project: financefollower }
+          annotations:
+            summary: "financefollower-analytics scrape hedefi 5 dakikadır ayakta değil"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="financefollower-analytics"}[15m]) > 3
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-analytics içinde pod 15 dakikada 3'ten fazla yeniden başladı"
+        - alert: FinanceFollowerJobFailing
+          expr: sum by (job) (increase(financefollower_job_runs_total{status="error"}[1h])) > 2
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-analytics {{ $labels.job }} işi son 1 saatte tekrar tekrar hata verdi"

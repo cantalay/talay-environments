@@ -1,0 +1,78 @@
+fullnameOverride: financefollower-api
+environment: prod
+partOf: financefollower
+replicaCount: 1                 # Telegram polling ve olay tüketicisi tek replika varsayar
+
+image:
+  repository: ghcr.io/cantalay/finance-follower-be
+  tag: "sha-29f9190"
+  digest: "sha256:e459145a2122a7029c2ee5564a8ba067293ed479f165c47ffd399c6e9a8ae72c"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+runtime:
+  type: java
+  java:
+    agent:
+      enabled: true
+    toolOptions: "-XX:MaxRAMPercentage=70"
+
+containerPort: 8080
+
+config:
+  SPRING_PROFILES_ACTIVE: prod
+  SERVER_PORT: "8080"
+  DEPLOYMENT_ENVIRONMENT: prod
+  KEYCLOAK_ISSUER_URI: https://auth.cantalay.com/realms/financefollower
+  KEYCLOAK_AUDIENCE: financefollower-api
+  APP_PUBLIC_URL: https://finance.cantalay.com
+  APP_CORS_ALLOWED_ORIGINS: https://finance.cantalay.com
+  REDIS_KEY_PREFIX: "financefollower:"
+  TELEGRAM_MODE: polling
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/financefollower/api
+  targetName: financefollower-api-secrets
+
+observability:
+  enabled: true
+  serviceName: financefollower-api
+  samplingRatio: "0.25"
+
+probes:
+  startup:
+    enabled: true
+    path: /api/actuator/health/liveness
+    failureThreshold: 60
+    periodSeconds: 5
+  readiness:
+    enabled: true
+    path: /api/actuator/health/readiness
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /api/actuator/health/liveness
+    periodSeconds: 20
+
+serviceMonitor:
+  enabled: true
+  path: /api/actuator/prometheus
+  interval: 30s
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    memory: 1Gi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

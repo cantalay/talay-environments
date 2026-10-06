@@ -1,0 +1,55 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: financefollower-api-alerts
+  labels:
+    app.kubernetes.io/name: financefollower-api
+    app.kubernetes.io/part-of: financefollower
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: financefollower-api
+      rules:
+        - alert: TalayAppDown
+          expr: sum(up{namespace="financefollower-api"}) == 0
+          for: 5m
+          labels: { severity: critical, project: financefollower }
+          annotations:
+            summary: "financefollower-api scrape hedefi 5 dakikadır ayakta değil"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="financefollower-api"}[15m]) > 3
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-api içinde pod 15 dakikada 3'ten fazla yeniden başladı"
+        - alert: TalayAppHighErrorRate
+          expr: |
+            sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="financefollower-api",http_response_status_code=~"5.."}[5m]))
+              / clamp_min(sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="financefollower-api"}[5m])), 1e-9) > 0.05
+          for: 10m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-api 5xx oranı %5'in üzerinde"
+        - alert: TalayAppSlow
+          expr: histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{k8s_namespace_name="financefollower-api"}[5m]))) > 1
+          for: 10m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-api p95 gecikme 1 saniyenin üzerinde"
+        - alert: FinanceFollowerStaleData
+          expr: max by (source) (financefollower_data_staleness_seconds{source!="TEFAS"}) > 1800
+          for: 15m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "{{ $labels.source }} kaynağından 30 dakikadır veri alınamıyor; sinyaller bayat veriye dayanabilir"
+        - alert: FinanceFollowerTefasStale
+          expr: max(financefollower_data_staleness_seconds{source="TEFAS"}) > 259200
+          for: 1h
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "TEFAS fon fiyatları 3 gündür güncellenmedi"
+        - alert: FinanceFollowerNotificationsStuck
+          expr: max(financefollower_notifications_pending) > 10
+          for: 30m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "Telegram bildirimleri gönderilemiyor (30 dakikadır 10+ bekleyen)"

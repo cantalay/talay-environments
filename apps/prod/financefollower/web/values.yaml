@@ -1,0 +1,43 @@
+fullnameOverride: financefollower-web
+environment: prod
+partOf: financefollower
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/finance-follower-admin
+  tag: "sha-1ab63fb"
+  digest: "sha256:02d14d568144b0bb8e4d9a9025f3656042ea8c9e3526ca1fc6590b7ed2e5893a"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+containerPort: 8080
+
+runtimeConfig:
+  API_URL: https://api.finance.cantalay.com/api
+  AUTH_URL: https://auth.cantalay.com
+  AUTH_REALM: financefollower
+
+securityHeaders:
+  # MUI (emotion) satır içi stil enjekte eder → style-src 'unsafe-inline'.
+  contentSecurityPolicy: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.finance.cantalay.com https://auth.cantalay.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+networkPolicy:
+  enabled: true
+  denyEgress: true
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 96Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
