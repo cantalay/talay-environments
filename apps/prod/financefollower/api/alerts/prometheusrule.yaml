@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: financefollower-api-alerts
+  labels:
+    app.kubernetes.io/name: financefollower-api
+    app.kubernetes.io/part-of: finance-follower
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: financefollower-api
+      rules:
+        - alert: TalayAppDown
+          expr: sum(up{namespace="financefollower-api"}) == 0
+          for: 5m
+          labels: { severity: critical, project: financefollower }
+          annotations:
+            summary: "financefollower-api scrape hedefi 5 dakikadır ayakta değil"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="financefollower-api"}[15m]) > 3
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-api içinde pod 15 dakikada 3'ten fazla yeniden başladı"
+        - alert: TalayAppHighErrorRate
+          expr: |
+            sum(rate(http_server_requests_seconds_count{namespace="financefollower-api",status=~"5.."}[5m]))
+              / clamp_min(sum(rate(http_server_requests_seconds_count{namespace="financefollower-api"}[5m])), 1e-9) > 0.05
+          for: 10m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-api 5xx oranı %5'in üzerinde"

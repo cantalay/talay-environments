@@ -1,0 +1,40 @@
+fullnameOverride: financefollower-web
+environment: prod
+partOf: finance-follower
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/finance-follower-admin
+  tag: "sha-1ab63fb"
+  digest: "sha256:02d14d568144b0bb8e4d9a9025f3656042ea8c9e3526ca1fc6590b7ed2e5893a"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+containerPort: 8080
+webRoot: /usr/share/nginx/html
+
+runtimeConfig:
+  API_URL: https://api.finance.cantalay.com/api
+  AUTH_URL: https://auth.cantalay.com
+  AUTH_REALM: financefollower
+
+nginx:
+  existingConfigMap: financefollower-web-nginx
+  configRevision: "1"
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

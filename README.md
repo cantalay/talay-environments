@@ -22,3 +22,7 @@ Aktif bileşenler `apps/prod/todogi/{auth-gateway,backend,web}` altındadır. Ba
 ## VitaFinder
 
 VitaFinder `apps/prod/vitafinder/{storefront,admin,api,worker}` bileşenlerinden oluşur. Storefront ve admin aynı immutable web image'inin ayrı dizinlerini sunar; API ve worker aynı core image'ini farklı process tipiyle çalıştırır. Public adresler `vitafinder.cantalay.com`, `admin.vitafinder.cantalay.com` ve `api.vitafinder.cantalay.com` olarak Traefik adresine yönlenir. Kimlik doğrulama `auth.cantalay.com/realms/vitafinder` üzerinden yapılır.
+
+## Finance Follower
+
+Finance Follower `apps/prod/financefollower/{api,analytics,web}` bileşenlerinden oluşur. Web paneli `finance.cantalay.com`, API `api.finance.cantalay.com/api` adresinden sunulur; analytics yalnız cluster içidir (ingress yok). API ve analytics aynı `financefollower` PostgreSQL veritabanını ve Redis DB 2'yi (`financefollower:` öneki) kullanır; secret'lar `apps/financefollower/{api,analytics}` Vault yollarından gelir. Giriş auth-gateway üzerinden `auth.cantalay.com/auth/financefollower/*` ile yapılır; realm `auth.cantalay.com/realms/financefollower`.

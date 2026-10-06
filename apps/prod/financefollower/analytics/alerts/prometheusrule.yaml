@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: financefollower-analytics-alerts
+  labels:
+    app.kubernetes.io/name: financefollower-analytics
+    app.kubernetes.io/part-of: finance-follower
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: financefollower-analytics
+      rules:
+        - alert: TalayAppDown
+          expr: sum(up{namespace="financefollower-analytics"}) == 0
+          for: 5m
+          labels: { severity: critical, project: financefollower }
+          annotations:
+            summary: "financefollower-analytics scrape hedefi 5 dakikadır ayakta değil"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="financefollower-analytics"}[15m]) > 3
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-analytics içinde pod 15 dakikada 3'ten fazla yeniden başladı"
+        - alert: FinanceFollowerJobFailing
+          # Uygulamanın "job" etiketi Prometheus scrape etiketiyle çakışır; exported_job olarak saklanır.
+          expr: sum by (exported_job) (increase(financefollower_job_runs_total{namespace="financefollower-analytics",status="error"}[1h])) > 3
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-analytics {{ $labels.exported_job }} işi son 1 saatte 3'ten fazla başarısız oldu"
+        - alert: FinanceFollowerSourceStale
+          # Hafta sonu piyasalar kapalı; tazelik yalnız hafta içi beklenir.
+          expr: |
+            (time() - max by (source) (financefollower_source_last_success_timestamp_seconds{namespace="financefollower-analytics"})) > 6 * 3600
+              and on() (day_of_week() >= 1 and day_of_week() <= 5)
+          for: 15m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "financefollower-analytics {{ $labels.source }} kaynağından 6 saattir veri alınamadı"

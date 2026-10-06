@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: financefollower-web
+  labels:
+    app.kubernetes.io/name: financefollower-web
+    app.kubernetes.io/part-of: finance-follower
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: financefollower-web-tls
+      hosts:
+        - finance.cantalay.com
+  rules:
+    - host: finance.cantalay.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: financefollower-web
+                port:
+                  number: 80

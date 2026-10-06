@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - certificate/certificate.yaml
+  - ingress/ingress.yaml
+
+configMapGenerator:
+  - name: financefollower-web-nginx
+    files:
+      - default.conf=nginx/default.conf
+
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+      app.kubernetes.io/name: financefollower-web
+      app.kubernetes.io/part-of: finance-follower
+      talay.io/environment: prod
