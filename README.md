@@ -21,4 +21,4 @@ Aktif bileşenler `apps/prod/todogi/{auth-gateway,backend,web}` altındadır. Ba
 
 ## VitaFinder
 
-VitaFinder `apps/prod/vitafinder/{storefront,admin,api,worker}` bileşenlerinden oluşur. Storefront ve admin aynı immutable web image'inin ayrı dizinlerini sunar; API ve worker aynı core image'ini farklı process tipiyle çalıştırır. Public adresler `vitafinder.cantalay.com`, `admin.vitafinder.cantalay.com` ve `api.vitafinder.cantalay.com` olarak Traefik adresine yönlenir. Kimlik doğrulama `auth.cantalay.com/realms/vitafinder` üzerinden yapılır.
+VitaFinder `apps/prod/vitafinder/{storefront,admin,api,worker}` bileşenlerinden oluşur. Storefront ve admin aynı immutable web image'inin ayrı dizinlerini sunar; API ve worker aynı core image'ini farklı process tipiyle çalıştırır. Public adresler `vita-pick.com`, `admin.vita-pick.com` ve `api.vita-pick.com` olarak Traefik adresine yönlenir. Kimlik doğrulama `auth.cantalay.com/realms/vitafinder` üzerinden yapılır.

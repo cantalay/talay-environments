@@ -11,9 +11,20 @@ spec:
   tls:
     - secretName: vitafinder-api-tls
       hosts:
-        - api.vitafinder.cantalay.com
+        - api.vita-pick.com
+        - www.api.vita-pick.com
   rules:
-    - host: api.vitafinder.cantalay.com
+    - host: api.vita-pick.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vitafinder-api
+                port:
+                  number: 80
+    - host: www.api.vita-pick.com
       http:
         paths:
           - path: /

@@ -25,15 +25,15 @@ containerPort: 8080
 config:
   NODE_ENV: production
   PORT: "8080"
-  PUBLIC_API_URL: https://api.vitafinder.cantalay.com
-  PUBLIC_WEB_URL: https://vitafinder.cantalay.com
-  PUBLIC_ADMIN_URL: https://admin.vitafinder.cantalay.com
+  PUBLIC_API_URL: https://api.vita-pick.com
+  PUBLIC_WEB_URL: https://vita-pick.com
+  PUBLIC_ADMIN_URL: https://admin.vita-pick.com
   # cloud metadata detectors (gcp/aws) only add startup noise on this host
   OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
   VITAFINDER_PROCESS_TYPE: api
   KEYCLOAK_ISSUER_URL: https://auth.cantalay.com/realms/vitafinder
   KEYCLOAK_AUDIENCE: vitafinder-api
-  CORS_ORIGINS: https://vitafinder.cantalay.com,https://admin.vitafinder.cantalay.com
+  CORS_ORIGINS: https://vita-pick.com,https://admin.vita-pick.com
   DB_POOL_MAX: "6"
 
 externalSecret:

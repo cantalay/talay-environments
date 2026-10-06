@@ -18,11 +18,11 @@ containerPort: 8080
 webRoot: /usr/share/nginx/html/admin
 
 runtimeConfig:
-  API_URL: https://api.vitafinder.cantalay.com
+  API_URL: https://api.vita-pick.com
   AUTH_URL: https://auth.cantalay.com
   AUTH_REALM: vitafinder
-  WEB_URL: https://vitafinder.cantalay.com
-  ADMIN_URL: https://admin.vitafinder.cantalay.com
+  WEB_URL: https://vita-pick.com
+  ADMIN_URL: https://admin.vita-pick.com
 
 nginx:
   existingConfigMap: vitafinder-admin-nginx

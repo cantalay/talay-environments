@@ -11,9 +11,20 @@ spec:
   tls:
     - secretName: vitafinder-admin-tls
       hosts:
-        - admin.vitafinder.cantalay.com
+        - admin.vita-pick.com
+        - www.admin.vita-pick.com
   rules:
-    - host: admin.vitafinder.cantalay.com
+    - host: admin.vita-pick.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vitafinder-admin
+                port:
+                  number: 80
+    - host: www.admin.vita-pick.com
       http:
         paths:
           - path: /
