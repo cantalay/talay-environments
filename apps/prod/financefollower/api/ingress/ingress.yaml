@@ -11,20 +11,9 @@ spec:
   tls:
     - secretName: financefollower-api-tls
       hosts:
-        - api.vita-pick.com
-        - www.api.vita-pick.com
+        - api.finance.cantalay.com
   rules:
-    - host: api.vita-pick.com
-      http:
-        paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: financefollower-api
-                port:
-                  number: 80
-    - host: www.api.vita-pick.com
+    - host: api.finance.cantalay.com
       http:
         paths:
           - path: /api

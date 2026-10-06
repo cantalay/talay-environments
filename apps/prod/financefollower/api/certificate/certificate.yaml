@@ -9,8 +9,7 @@ metadata:
 spec:
   secretName: financefollower-api-tls
   dnsNames:
-    - api.vita-pick.com
-    - www.api.vita-pick.com
+    - api.finance.cantalay.com
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer

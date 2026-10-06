@@ -29,8 +29,8 @@ config:
   DEPLOYMENT_ENVIRONMENT: prod
   KEYCLOAK_ISSUER_URI: https://auth.cantalay.com/realms/financefollower
   KEYCLOAK_AUDIENCE: financefollower-api
-  APP_PUBLIC_URL: https://vita-pick.com
-  APP_CORS_ALLOWED_ORIGINS: https://vita-pick.com
+  APP_PUBLIC_URL: https://finance.cantalay.com
+  APP_CORS_ALLOWED_ORIGINS: https://finance.cantalay.com
   REDIS_KEY_PREFIX: "financefollower:"
   TELEGRAM_MODE: polling
 

@@ -17,13 +17,13 @@ registrySecret:
 containerPort: 8080
 
 runtimeConfig:
-  API_URL: https://api.vita-pick.com/api
+  API_URL: https://api.finance.cantalay.com/api
   AUTH_URL: https://auth.cantalay.com
   AUTH_REALM: financefollower
 
 securityHeaders:
   # MUI (emotion) satır içi stil enjekte eder → style-src 'unsafe-inline'.
-  contentSecurityPolicy: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.vita-pick.com https://auth.cantalay.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+  contentSecurityPolicy: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.finance.cantalay.com https://auth.cantalay.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
 networkPolicy:
   enabled: true
