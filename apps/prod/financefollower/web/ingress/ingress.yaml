@@ -11,9 +11,10 @@ spec:
   tls:
     - secretName: financefollower-web-tls
       hosts:
-        - finance.cantalay.com
+        - vita-pick.com
+        - www.vita-pick.com
   rules:
-    - host: finance.cantalay.com
+    - host: vita-pick.com
       http:
         paths:
           - path: /
@@ -23,3 +24,14 @@ spec:
                 name: financefollower-web
                 port:
                   number: 80
+    - host: www.vita-pick.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: financefollower-web
+                port:
+                  number: 80
+

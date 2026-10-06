@@ -9,7 +9,8 @@ metadata:
 spec:
   secretName: financefollower-web-tls
   dnsNames:
-    - finance.cantalay.com
+    - vita-pick.com
+    - www.vita-pick.com
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer
