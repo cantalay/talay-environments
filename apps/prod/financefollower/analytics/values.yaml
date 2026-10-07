@@ -5,8 +5,8 @@ replicaCount: 1                 # zamanlanmış işler ve komut tüketicisi tek 
 
 image:
   repository: ghcr.io/cantalay/finance-follower-analytics
-  tag: "sha-baa061e"
-  digest: "sha256:6c9605f54cc3c039a17186cfb1b00fa2a3b3802e58de8673b523960cdc49893d"
+  tag: "sha-36b9997"
+  digest: "sha256:f1371f4b4e11535c64ffd95462e7bea54ddd31a9fbbec9150a2bece2043fa04c"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -59,12 +59,13 @@ serviceMonitor:
   path: /metrics
   interval: 60s
 
+# Evren taraması (BIST/ABD/ETF/TEFAS/kripto) ilk tam indirmede ~700 MB'a çıkar.
 resources:
   requests:
-    cpu: 200m
-    memory: 384Mi
+    cpu: 300m
+    memory: 512Mi
   limits:
-    memory: 1Gi
+    memory: 1536Mi
 
 autoscaling:
   enabled: false
