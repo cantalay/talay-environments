@@ -5,8 +5,8 @@ replicaCount: 1                 # zamanlanmış işler ve komut tüketicisi tek 
 
 image:
   repository: ghcr.io/cantalay/finance-follower-analytics
-  tag: "sha-149acab"
-  digest: "sha256:2474e4649e2f3385365b195f9b028d30c33c68bbdc28ecb826b185ab407ea95e"
+  tag: "sha-1808ee8"
+  digest: "sha256:5421d31ff9ab879bdfd5ded4b92978f43d23e5a8fce435418c22da760b5f66b8"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -28,6 +28,33 @@ config:
   QUOTE_INTERVAL_SECONDS: "120"
   BARS_INTERVAL_MINUTES: "30"
   BACKFILL_YEARS: "3"
+  # Haber analizi AI servisi (eski sunucu, finance-follower-ai). Token Vault'ta: AI_SERVICE_TOKEN.
+  AI_SERVICE_URL: https://45.87.80.10:8601
+  AI_SERVICE_CA_PEM: |
+    -----BEGIN CERTIFICATE-----
+    MIIEGTCCAoGgAwIBAgIUOabmAIRCEmgi4eX7s7tcZIPD48UwDQYJKoZIhvcNAQEL
+    BQAwEDEOMAwGA1UEAwwFZmYtYWkwHhcNMjYxMDA3MTEyODQ3WhcNMzYxMDA0MTEy
+    ODQ3WjAQMQ4wDAYDVQQDDAVmZi1haTCCAaIwDQYJKoZIhvcNAQEBBQADggGPADCC
+    AYoCggGBALbdapFzcmISQ4q9o54FOCj05jAXeAIJEhZBAkb6yluJ0+3XQimetPBp
+    tQHcetDWGDM6am29GnbASyWgE2mhavjA9viq4Kp8mVvAeVpX2dDSuzMNk6cDry//
+    vXpTkdLM2VEGia669OEInXb30a1vNvgizWFRyk5i0VMH4P7rgHk/NDz1yLbwxXmd
+    IdoCjvF7TTZw9mU1H0G1FGKm+WfPH6snN21BL6C3FXBsuTBZtXPA3J/vajmcQUEj
+    sjJ+jvvGiHvNh904bDTdcPrVcBGYIQvaTHsBZ5sdi6Z2XdPNcYRZiVmXZPJJwxmD
+    RcD9VuJByHTrzINOgicRonevzN8eQDtBzTJeHt/erjmnYxzBNzK95H1Kfe5T2pxV
+    +gYVVsLZKNwn7xD5fqWyYuh+Kf/2dAADPq9B9YLekTbJhvGpTAW9u8X+kk89XxzX
+    tvGBkDJFOopsZ+/FFQ/dhmanegIaOj7KSN635DkolAsBpcpPYXy67HrdCn5beZES
+    c6LvZXX8lwIDAQABo2swaTAdBgNVHQ4EFgQUi/9DDy9LH+17Qzmeh9lGTPn9Zfww
+    HwYDVR0jBBgwFoAUi/9DDy9LH+17Qzmeh9lGTPn9ZfwwDwYDVR0TAQH/BAUwAwEB
+    /zAWBgNVHREEDzANhwQtV1AKggVmZi1haTANBgkqhkiG9w0BAQsFAAOCAYEAoPpC
+    fkctIncidJo5u6ujWK9pzmEpwMyI86i8l2nT1UmYqiJrEyu4B4QeGUKDXJakxRUV
+    7Ahrn4WlVHTPaNR+fWfBNFkYnMYMcIknkr7XOyy0ysNMCiyJmoqRlGKELefga8Nl
+    nCQdHqxgmZ+OdaSdEI3iVQu7gxolIM8TO2X4HX8gr6u6wWCg5gq0bXPVUN18smXl
+    y51fs7NgH49XPFtaQubzieMLN1FRQOjI/sCkwkzPqXKXsXbrCroiMY/OQgjKk8kf
+    0qMDZvvf2rop6yChNOAGkD4IshvauoF0+aLsgT0l+BCtJe9kwD938i4qXvZaG0nN
+    hN1+P2f/G3KNB/Qn9+MVXaF8a3qVeKEuo6uNtG9SyWEG9MVzWVGBkcJcIUheNJLd
+    XO9+sDmNSoSbYgV133+jdLoDghtTYLEwoyOCjlUx1/IbD7xiGESniAFiZl0AsjS9
+    LZYKOXYtIPPgeRG3MVo+dalxZUjzRTXrwUejVMhP/Gz+khvcQaL3ES6q7zzl
+    -----END CERTIFICATE-----
 
 externalSecret:
   enabled: true
