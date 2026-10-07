@@ -5,8 +5,8 @@ replicaCount: 1                 # zamanlanmış işler ve komut tüketicisi tek 
 
 image:
   repository: ghcr.io/cantalay/finance-follower-analytics
-  tag: "sha-aea38b3"
-  digest: "sha256:ef5a520909166c0986ce677ba666554f6f24e0467c0459faaa4034a000e9c88e"
+  tag: "sha-02a852f"
+  digest: "sha256:cd9ab960610633b674b63db3912b99888c765eb2febf0d74207213d7cd95f2f1"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -66,6 +66,18 @@ resources:
     memory: 512Mi
   limits:
     memory: 1536Mi
+
+# /internal/* (makro katalog araması) yalnız API pod'larına açıktır; ingress yoktur.
+networkPolicy:
+  enabled: true
+  additionalIngress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: financefollower-api
+      ports:
+        - protocol: TCP
+          port: 8080
 
 autoscaling:
   enabled: false

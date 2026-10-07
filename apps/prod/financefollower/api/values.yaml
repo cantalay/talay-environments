@@ -5,8 +5,8 @@ replicaCount: 1                 # Telegram polling ve olay tüketicisi tek repli
 
 image:
   repository: ghcr.io/cantalay/finance-follower-be
-  tag: "sha-ede549a"
-  digest: "sha256:e7dd62edabf3cfb17b825b60a7c11209796f45eeef6808bb5d3477b2fad46085"
+  tag: "sha-0d1fabf"
+  digest: "sha256:8f8549a91adb7ca028452f355f51bbaecf2c55c238e098bf02fa338419175507"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -33,6 +33,8 @@ config:
   APP_CORS_ALLOWED_ORIGINS: https://finance.cantalay.com
   REDIS_KEY_PREFIX: "financefollower:"
   TELEGRAM_MODE: polling
+  # Makro katalog araması (EVDS/FRED) analytics'in cluster içi uç noktasına vekil edilir.
+  ANALYTICS_URL: http://financefollower-analytics.financefollower-analytics.svc.cluster.local
 
 externalSecret:
   enabled: true
