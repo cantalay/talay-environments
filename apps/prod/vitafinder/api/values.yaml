@@ -80,3 +80,12 @@ autoscaling:
 
 podDisruptionBudget:
   enabled: false
+
+# self-hosted product pictures (/media/p/<id>.webp)
+volumes:
+  - name: media
+    persistentVolumeClaim:
+      claimName: vitafinder-media
+volumeMounts:
+  - name: media
+    mountPath: /var/media

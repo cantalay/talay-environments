@@ -4,6 +4,7 @@ resources:
   - certificate/certificate.yaml
   - ingress/ingress.yaml
   - alerts/prometheusrule.yaml
+  - media/pvc.yaml
 
 configMapGenerator:
   - name: vitafinder-api-dashboard

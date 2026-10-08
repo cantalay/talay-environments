@@ -1,0 +1,15 @@
+# Product picture store (self-hosted copies of retailer pictures). A cache: everything can be rebuilt from the
+# retailers, so local-path (single disk) is acceptable.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vitafinder-media
+  labels:
+    app.kubernetes.io/name: vitafinder-api
+    app.kubernetes.io/part-of: vita-finder
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 20Gi
