@@ -5,8 +5,8 @@ replicaCount: 1                 # zamanlanmış işler ve komut tüketicisi tek 
 
 image:
   repository: ghcr.io/cantalay/finance-follower-analytics
-  tag: "sha-fb318a8"
-  digest: "sha256:f453998e6eeb4ec79d92af55b299813901c86fa8c8114c8d0fd581d320fb65ae"
+  tag: "sha-0588bfc"
+  digest: "sha256:04ef60add8c02cbbea24976d967dfd145f19783c5dcfbcbcb9b970ffa99cdcc4"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -28,8 +28,9 @@ config:
   QUOTE_INTERVAL_SECONDS: "120"
   BARS_INTERVAL_MINUTES: "30"
   BACKFILL_YEARS: "3"
-  # Haber analizi AI servisi (eski sunucu, finance-follower-ai). Token Vault'ta: AI_SERVICE_TOKEN.
-  AI_SERVICE_URL: https://45.87.80.10:8601
+  # Haber analizi AI servisi (finance-follower-ai): önce yerel GPU (ters SSH tüneli, cni0 10.42.0.1:18601),
+  # erişilemezse eski sunucu. Token Vault'ta: AI_SERVICE_TOKEN. Sertifikalar: eski sunucu + yerel (sırayla).
+  AI_SERVICE_URL: https://10.42.0.1:18601,https://45.87.80.10:8601
   AI_SERVICE_CA_PEM: |
     -----BEGIN CERTIFICATE-----
     MIIEGTCCAoGgAwIBAgIUOabmAIRCEmgi4eX7s7tcZIPD48UwDQYJKoZIhvcNAQEL
@@ -54,6 +55,31 @@ config:
     hN1+P2f/G3KNB/Qn9+MVXaF8a3qVeKEuo6uNtG9SyWEG9MVzWVGBkcJcIUheNJLd
     XO9+sDmNSoSbYgV133+jdLoDghtTYLEwoyOCjlUx1/IbD7xiGESniAFiZl0AsjS9
     LZYKOXYtIPPgeRG3MVo+dalxZUjzRTXrwUejVMhP/Gz+khvcQaL3ES6q7zzl
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    MIIEMTCCApmgAwIBAgIUUK3i6IuZxNhV9mG/X7ZVLOJZ0tIwDQYJKoZIhvcNAQEL
+    BQAwFjEUMBIGA1UEAwwLZmYtYWktbG9jYWwwHhcNMjYxMDA4MDYyOTQ2WhcNMzYx
+    MDA1MDYyOTQ2WjAWMRQwEgYDVQQDDAtmZi1haS1sb2NhbDCCAaIwDQYJKoZIhvcN
+    AQEBBQADggGPADCCAYoCggGBALPFuNZNldCRbwrX90nYJds0BgSwwc58Dxwsl2rH
+    iWd3B1wBX2d+NJAlafe4KylTe4SNi9R2IL9W1fgCcGoXeoW2N5ijah/zSDpcd7VJ
+    WKs+iZmoyfmWSjP29bH41dVmTnB0WfILQ6ve4tN53C7ZHE9qx+VoBFwewHJnADAz
+    am2jdNjnwsVNMrRs0BZ+zxeNFGEWPH3NvRF6qCPg3EuZv05F/6a36qkFjT8Nm2Sw
+    bsTRUFAX0MQXdX/DBfPOPCHSgSZocqjLgMNRp4WwHfPKyef/3j4qHN1/K/u41wS3
+    p0BedW/XsjdqfhGwom5IOtIWdLK5zx6400Q571OHmS5ofOQ9yfwrLiFDK1tMXCNM
+    pen/u/PFgsb5fLAp/sm+MBvNMpUomUaNSmmuJeOrsoSExG18KEJKGyB1o4r6DsRd
+    4qy73Uj2fxWqAJ4qucM/xhOngqwxBf2CupcxdPJ+Z+f+Ps7jFkU8Mj0v7Gdae6N9
+    EVujqqDQg/qWNsdOp0pVeqlj9wIDAQABo3cwdTAdBgNVHQ4EFgQUXzon26Kffig/
+    Ulg/14yq0VVffjEwHwYDVR0jBBgwFoAUXzon26Kffig/Ulg/14yq0VVffjEwDwYD
+    VR0TAQH/BAUwAwEB/zAiBgNVHREEGzAZhwQKKgABhwR/AAABggtmZi1haS1sb2Nh
+    bDANBgkqhkiG9w0BAQsFAAOCAYEAayk/yFCDVJPD+Llyeu2deAFNm69i/Qxoij+0
+    5AdsleiKPIafH2FyfxR0Eq0W+2menSDGxDAarN9ITCTcmY4cfMF9XlTGbjgCgTKt
+    cnziKPTt7YEiFKutA/LhTfTfCri+56xaVedGMXnAPIPXd14SUZ9EJPLFYYEIbRW4
+    HilYgJzFISYFlPCeazPXIic6f8d7mjFbR0f5Ai5VD+RC2rMJKnnIuIjShLmOPlIQ
+    fIG6Jd9BhKUFUoh5QwZbaHH0t6EroGKYORz6Gi+vDjUOo8l99WP6zN5E3bQa8FLu
+    LIxoMqJnP5n0x8Z2+5gC9JFt8uAa9kdE0/JXzUHyAUir4upnaree7y3ISCSY0CAP
+    xizAB4tsqUWHqzBqBk+o8IHLKhev8c5KTmGV5qKMRTH1suEeYEoxVfJCQkHqUbzH
+    n5Ok18v3l4w7NssxxenBCl1YYEAITO8QFgl1ck+h7oqEGVHuAuzApbbZ+OoBJw0A
+    TxkGS857aNToWQ9XllXCjPKx5BcL
     -----END CERTIFICATE-----
 
 externalSecret:
