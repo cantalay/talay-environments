@@ -1,0 +1,81 @@
+# Colony Conquest oyun sunucusu (cantalay/conquorer, docs/21): .NET 10 + Orleans, tek pod (api + silo + worker).
+fullnameOverride: conquest-api
+environment: prod
+partOf: conquest
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/conquest-server
+  tag: "sha-16e431b"
+  digest: "sha256:feeba76774253c87d1062fd2ade5cdb68c417b2a7f2ad0de2b0c87be2986edc5"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+# .NET: OTel SDK uygulamanın içinde; chart yalnız OTEL_* env'lerini verir (Java agent / Node enjeksiyonu yok).
+runtime:
+  type: other
+
+containerPort: 8080
+
+config:
+  ASPNETCORE_ENVIRONMENT: Production
+  Auth__Mode: Oidc
+  KEYCLOAK_ISSUER_URL: https://auth.cantalay.com/realms/conquest
+  KEYCLOAK_AUDIENCE: conquest-api
+  Conquest__Roles: api,silo,worker
+  Conquest__Orleans__Clustering: Localhost
+  Conquest__Orleans__Storage: AdoNet
+  DB_POOL_MAX: "8"
+  # Paylaşımlı düğüm: iş istasyonu GC'si (sunucu GC'si 8 çekirdekte gereksiz bellek ayırır).
+  DOTNET_gcServer: "0"
+  DOTNET_GCConserveMemory: "5"
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/conquest/api
+  targetName: conquest-api-secrets
+
+observability:
+  enabled: true
+  serviceName: conquest-api
+  metricsExporter: none        # metrikler /metrics üzerinden kazınır (ServiceMonitor)
+  samplingRatio: "0.25"
+
+probes:
+  startup:
+    enabled: true
+    path: /health/startup
+    failureThreshold: 60
+    periodSeconds: 5
+  readiness:
+    enabled: true
+    path: /health/ready
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /health/live
+    initialDelaySeconds: 15
+    periodSeconds: 20
+
+serviceMonitor:
+  enabled: true
+  path: /metrics
+  interval: 30s
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 768Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

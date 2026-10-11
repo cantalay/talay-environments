@@ -1,0 +1,41 @@
+# Yalnız oyun API'si (/v1), gerçek zamanlı kanal (/hubs, WebSocket) ve dış uptime için /health/live dışarı açılır.
+# /metrics (ServiceMonitor küme içinden kazır) ve /admin (GM API) ingress'te yoktur.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: conquest-api
+  labels:
+    app.kubernetes.io/name: conquest-api
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: conquest-api-tls
+      hosts:
+        - api.conquest.cantalay.com
+  rules:
+    - host: api.conquest.cantalay.com
+      http:
+        paths:
+          - path: /v1
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /hubs
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /health/live
+            pathType: Exact
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80

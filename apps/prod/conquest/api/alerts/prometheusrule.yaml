@@ -1,0 +1,49 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: conquest-api-alerts
+  labels:
+    app.kubernetes.io/name: conquest-api
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: conquest-api
+      rules:
+        - alert: TalayAppDown
+          expr: sum(up{namespace="conquest-api"}) == 0
+          for: 5m
+          labels: { severity: critical, project: conquest }
+          annotations:
+            summary: "conquest-api scrape hedefi 5 dakikadır ayakta değil"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="conquest-api"}[15m]) > 3
+          labels: { severity: warning, project: conquest }
+          annotations:
+            summary: "conquest-api içinde pod 15 dakikada 3'ten fazla yeniden başladı"
+        - alert: TalayAppHighErrorRate
+          expr: |
+            sum(rate(http_server_request_duration_seconds_count{namespace="conquest-api",http_response_status_code=~"5.."}[5m]))
+              / clamp_min(sum(rate(http_server_request_duration_seconds_count{namespace="conquest-api"}[5m])), 1e-9) > 0.05
+          for: 10m
+          labels: { severity: warning, project: conquest }
+          annotations:
+            summary: "conquest-api 5xx oranı %5'in üzerinde"
+        - alert: TalayAppSlow
+          expr: histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{namespace="conquest-api",http_route!~"/hubs.*"}[5m]))) > 1
+          for: 10m
+          labels: { severity: warning, project: conquest }
+          annotations:
+            summary: "conquest-api p95 gecikme 1 saniyenin üzerinde (WebSocket hariç)"
+        - alert: ConquestNotReady
+          expr: sum(kube_pod_status_ready{namespace="conquest-api",condition="true"}) == 0
+          for: 5m
+          labels: { severity: critical, project: conquest }
+          annotations:
+            summary: "conquest-api hazır değil (PostgreSQL veya Orleans silosu)"
+        - alert: ConquestMemoryHigh
+          expr: max(container_memory_working_set_bytes{namespace="conquest-api",container!=""}) > 650 * 1024 * 1024
+          for: 15m
+          labels: { severity: warning, project: conquest }
+          annotations:
+            summary: "conquest-api bellek kullanımı 650 MiB üzerinde (sınır 768 MiB)"
