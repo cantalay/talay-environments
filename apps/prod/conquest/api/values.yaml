@@ -6,8 +6,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/conquest-server
-  tag: "sha-e2e0aa0"
-  digest: "sha256:52d1d03e2156e884ca600b823eb6901c03007ac4539c5c1588577e4576355124"
+  tag: "sha-da1f773"
+  digest: "sha256:38544413a99eddab6e6de1d94e1f97cf9bdb685c2c860e307d802c120d65ba97"
   pullPolicy: IfNotPresent
 
 registrySecret:
