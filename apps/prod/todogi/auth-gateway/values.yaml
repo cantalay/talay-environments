@@ -24,7 +24,7 @@ containerPort: 8080
 # Gateway'in hizmet verdiği ek realm'ler (Vault kv/apps/todogi/keycloak GATEWAY_REALMS_<REALM>_ADMINCLIENTSECRET).
 # Env yalnız başlangıçta okunur: realm eklerken bu listeyi güncellemek rollout'u tetikler.
 podAnnotations:
-  talay.io/gateway-realms: "vitafinder,financefollower"
+  talay.io/gateway-realms: "vitafinder,financefollower,conquest"
 
 config:
   SERVER_PORT: "8080"
