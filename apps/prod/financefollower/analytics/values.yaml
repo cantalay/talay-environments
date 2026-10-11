@@ -5,8 +5,8 @@ replicaCount: 1                 # zamanlanmış işler ve komut tüketicisi tek 
 
 image:
   repository: ghcr.io/cantalay/finance-follower-analytics
-  tag: "sha-fd95e7b"
-  digest: "sha256:0104b06c662aaa968c7fbb4801009ad742b89835dd7b1fcda6c494e7e2e7c017"
+  tag: "sha-9373bb6"
+  digest: "sha256:e625af42b4bae6db022f96c4ad1894c11f00deb416f41b783865787ecdb35a6d"
   pullPolicy: IfNotPresent
 
 registrySecret:
