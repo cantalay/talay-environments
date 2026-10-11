@@ -4,6 +4,7 @@ resources:
   - certificate/certificate.yaml
   - ingress/ingress.yaml
   - alerts/prometheusrule.yaml
+  - broker/externalsecret.yaml
 
 configMapGenerator:
   - name: financefollower-api-dashboard

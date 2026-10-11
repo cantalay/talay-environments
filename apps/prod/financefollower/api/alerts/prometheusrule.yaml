@@ -53,3 +53,14 @@ spec:
           labels: { severity: warning, project: financefollower }
           annotations:
             summary: "Telegram bildirimleri gönderilemiyor (30 dakikadır 10+ bekleyen)"
+        - alert: FinanceFollowerBrokerErrors
+          expr: sum(increase(financefollower_broker_errors_total[15m])) > 5
+          for: 5m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "Kurum (Alpaca paper) çağrıları 15 dakikada 5'ten fazla hata verdi; emir senkronu/mutabakat aksıyor"
+        - alert: FinanceFollowerBrokerReconciliationDiff
+          expr: sum(increase(financefollower_broker_reconciliations_total{result="diff"}[30m])) >= 3
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "Kurum mutabakatında 30 dakikadır defterle fark var (pozisyon ya da sahipsiz emir); Hesaplar kartından inceleyin"

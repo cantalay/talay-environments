@@ -5,8 +5,8 @@ replicaCount: 1                 # Telegram polling ve olay tüketicisi tek repli
 
 image:
   repository: ghcr.io/cantalay/finance-follower-be
-  tag: "sha-630a001"
-  digest: "sha256:1607813aacdc9d0763e8497a1b6880b49d4c594b2a01367646a02e5b9d6cdc7b"
+  tag: "sha-7550330"
+  digest: "sha256:3aed1afc1e082eed5453ac90b18520c1e7727a38f2d4da676210c8946a92de3f"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -40,6 +40,12 @@ externalSecret:
   enabled: true
   remoteKey: apps/financefollower/api
   targetName: financefollower-api-secrets
+
+# Alpaca paper emir adaptörü anahtarları (broker/externalsecret.yaml)
+envFrom:
+  - secretRef:
+      name: financefollower-api-broker
+      optional: true
 
 observability:
   enabled: true
