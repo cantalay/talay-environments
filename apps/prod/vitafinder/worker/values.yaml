@@ -5,8 +5,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/vitafinder-core
-  tag: "sha-761b0aa"
-  digest: "sha256:cd08aeed3ed7873101d795742211a98d8e4c7620e2076f87164003e27afa1782"
+  tag: "sha-11d8b58"
+  digest: "sha256:7fbf8b848549a03350929e5c7f556d365ec891b138a2b50a5b6e95e8a8382d35"
   pullPolicy: IfNotPresent
 
 registrySecret:
