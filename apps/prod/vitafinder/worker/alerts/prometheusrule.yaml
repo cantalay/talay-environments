@@ -46,3 +46,11 @@ spec:
           labels: { severity: warning, project: vitafinder }
           annotations:
             summary: "Arka plan işi {{ $labels.job }} son 1 saatte 20'den fazla başarısız"
+        - alert: VitaFinderMemoryHigh
+          expr: |
+            max(container_memory_working_set_bytes{namespace="vitafinder-worker",container!="",container!="POD"})
+              / max(kube_pod_container_resource_limits{namespace="vitafinder-worker",resource="memory"}) > 0.85
+          for: 15m
+          labels: { severity: warning, project: vitafinder }
+          annotations:
+            summary: "vitafinder-worker bellek kullanımı 15 dakikadır sınırın %85'inin üzerinde (OOM yeniden başlatma yakın)"

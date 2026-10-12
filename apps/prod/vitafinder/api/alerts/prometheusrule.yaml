@@ -35,3 +35,11 @@ spec:
           labels: { severity: warning, project: vitafinder }
           annotations:
             summary: "vitafinder-api p95 gecikme 1 saniyenin üzerinde"
+        - alert: VitaFinderMemoryHigh
+          expr: |
+            max(container_memory_working_set_bytes{namespace="vitafinder-api",container!="",container!="POD"})
+              / max(kube_pod_container_resource_limits{namespace="vitafinder-api",resource="memory"}) > 0.85
+          for: 15m
+          labels: { severity: warning, project: vitafinder }
+          annotations:
+            summary: "vitafinder-api bellek kullanımı 15 dakikadır sınırın %85'inin üzerinde (OOM yeniden başlatma yakın)"
