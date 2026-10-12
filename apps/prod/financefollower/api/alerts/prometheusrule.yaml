@@ -36,11 +36,13 @@ spec:
           annotations:
             summary: "financefollower-api p95 gecikme 1 saniyenin üzerinde"
         - alert: FinanceFollowerStaleData
-          expr: max by (source) (financefollower_data_staleness_seconds{source!="TEFAS"}) > 1800
+          # financefollower_data_stale: api, kaynağın beklenen yenilenme aralığına göre (anlık fiyat 30 dk, günlük
+          # kaynaklar 2-4 gün) bayatlığı 0/1 verir; ham saniye eşiği günlük kaynaklarda sürekli alarm üretiyordu
+          expr: max by (source) (financefollower_data_stale{source!="TEFAS"}) == 1
           for: 15m
           labels: { severity: warning, project: financefollower }
           annotations:
-            summary: "{{ $labels.source }} kaynağından 30 dakikadır veri alınamıyor; sinyaller bayat veriye dayanabilir"
+            summary: "{{ $labels.source }} kaynağı beklenen aralıkta veri vermiyor; sinyaller bayat veriye dayanabilir"
         - alert: FinanceFollowerTefasStale
           expr: max(financefollower_data_staleness_seconds{source="TEFAS"}) > 259200
           for: 1h
