@@ -6,8 +6,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/conquest-server
-  tag: "sha-8c65dbe"
-  digest: "sha256:632569007e1e6f801d320c79ca5bde6d78d2cf3e49e7dd2d73f95fe9635b566d"
+  tag: "sha-2446693"
+  digest: "sha256:989f6fc79aa72b097ee28e08d18c3edc04d831ac52708a5dea792250d64cf4b7"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -33,6 +33,8 @@ config:
   # Paylaşımlı düğüm: iş istasyonu GC'si (sunucu GC'si 8 çekirdekte gereksiz bellek ayırır).
   DOTNET_gcServer: "0"
   DOTNET_GCConserveMemory: "5"
+  # docs/41 §4: bulmaca üretimi CPU yoğun; pod'un CPU sınırı yok, paylaşımlı düğümde aynı anda en çok 3 üretim.
+  Puzzles__MaxConcurrentGenerations: "3"
 
 externalSecret:
   enabled: true
