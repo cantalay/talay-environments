@@ -1,5 +1,6 @@
-# Yalnız oyun API'si (/v1), gerçek zamanlı kanal (/hubs, WebSocket) ve dış uptime için /health/live dışarı açılır.
-# /metrics (ServiceMonitor küme içinden kazır) ve /admin (GM API) ingress'te yoktur.
+# Yalnız oyun API'si (/v1), gerçek zamanlı kanal (/hubs, WebSocket), dış uptime için /health/live ve mağazaların istediği
+# herkese açık sayfalar dışarı açılır (conquorer docs/42 §3.1): ana sayfa (/), gizlilik/koşullar (/legal), destek formu
+# (/support), uygulamasız hesap silme (/account). /metrics (ServiceMonitor küme içinden kazır) ve /admin (GM API) ingress'te yoktur.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -33,6 +34,34 @@ spec:
                 port:
                   number: 80
           - path: /health/live
+            pathType: Exact
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /legal
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /support
+            pathType: Exact
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /account/delete
+            pathType: Exact
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /
             pathType: Exact
             backend:
               service:
