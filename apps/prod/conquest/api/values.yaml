@@ -6,8 +6,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/conquest-server
-  tag: "sha-10bb426"
-  digest: "sha256:88b41b4785aa2d3f583da5247bd9f96a0130557a07da100263458dfba4bc7834"
+  tag: "sha-98cfade"
+  digest: "sha256:61fa17edeb1d5e5d8a137bb41bb2255cb2209e764a4c123a5685ec71c87e2c0e"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -29,6 +29,10 @@ config:
   # admin: yönetim paneli API'si /admin/v1 (docs/55). Tarayıcıdan yalnız panelin kökeni (app-standards §13, '*' yok).
   Conquest__Roles: api,silo,worker,admin
   CORS_ORIGINS: https://admin.conquest.cantalay.com
+  # docs/56 §2.2: push. iOS → APNs (Vault APNS_AUTH_KEY + aşağıdaki kimlikler), Android → FCM (Vault FCM_SERVICE_ACCOUNT_JSON +
+  # Push__Android__*). Anahtar yokken o platformun cihazları atlanır, oyun çalışır.
+  Notifications__Sender: Platform
+  Apns__BundleId: com.cantalay.colonyconquest
   Conquest__Orleans__Clustering: Localhost
   Conquest__Orleans__Storage: AdoNet
   DB_POOL_MAX: "8"
