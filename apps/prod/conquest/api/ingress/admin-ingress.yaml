@@ -1,0 +1,27 @@
+# Yönetim API'si (conquorer docs/55): yalnız panelin host'unda, aynı kökenden. Oyunun herkese açık host'unda
+# (api.conquest.cantalay.com) /admin yine yoktur. Yetki sunucuda: Keycloak conquest realm'inin admin rolü.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: conquest-api-admin
+  labels:
+    app.kubernetes.io/name: conquest-api
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: conquest-admin-api-tls
+      hosts:
+        - admin.conquest.cantalay.com
+  rules:
+    - host: admin.conquest.cantalay.com
+      http:
+        paths:
+          - path: /admin/v1
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80

@@ -1,0 +1,27 @@
+# Panelin statik dosyaları. /admin/v1 aynı host'ta conquest-api'ye gider (conquest-api namespace'indeki ayrı Ingress;
+# Traefik daha uzun yolu önce eşler).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: conquest-admin
+  labels:
+    app.kubernetes.io/name: conquest-admin
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: conquest-admin-tls
+      hosts:
+        - admin.conquest.cantalay.com
+  rules:
+    - host: admin.conquest.cantalay.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-admin
+                port:
+                  number: 80

@@ -1,0 +1,48 @@
+# Colony Conquest yönetim paneli (cantalay/conquest-admin, conquorer docs/55): React SPA. Arka ucu conquest-api'nin
+# /admin/v1 ucudur; aynı host'tan ayrı Ingress ile (apps/prod/conquest/api/ingress/admin-ingress.yaml) gider.
+fullnameOverride: conquest-admin
+environment: prod
+partOf: conquest
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/conquest-admin
+  tag: "sha-c178a64"
+  digest: "sha256:73b1b077e41beffb711c592e00284f57fdef60c904560ba381a1386be39348ad"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+containerPort: 8080
+
+runtimeConfig:
+  API_URL: ""
+  AUTH_URL: https://auth.cantalay.com
+  AUTH_REALM: conquest
+  ENVIRONMENT: prod
+
+# Güvenlik başlıkları (CSP dahil) her location'da tekrar edilir: nginx, kendi add_header'ı olan location'a sunucu
+# seviyesindekileri miras vermez (PLATFORM.md §11).
+nginx:
+  existingConfigMap: conquest-admin-nginx
+  configRevision: "1"
+
+networkPolicy:
+  enabled: true
+  denyEgress: true
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 96Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

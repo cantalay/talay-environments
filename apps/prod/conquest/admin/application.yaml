@@ -1,0 +1,6 @@
+name: conquest-admin
+environment: prod
+namespace: conquest-admin
+chartPath: charts/talay-web
+valuesFile: apps/prod/conquest/admin/values.yaml
+manifestsPath: apps/prod/conquest/admin
