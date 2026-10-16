@@ -1,5 +1,3 @@
-# Panelin statik dosyaları. /admin/v1 aynı host'ta conquest-api'ye gider (conquest-api namespace'indeki ayrı Ingress;
-# Traefik daha uzun yolu önce eşler).
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
