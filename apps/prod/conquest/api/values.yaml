@@ -6,8 +6,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/conquest-server
-  tag: "sha-dcebe29"
-  digest: "sha256:f2fb4ed61fca970ec30b67c8a52496da04a1dfedaf4b70d3486a291a989402ef"
+  tag: "sha-dc1143c"
+  digest: "sha256:6ee211299d217257973e64755c54ef7527f3326cbad940215fbcf667cb564933"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -26,8 +26,9 @@ config:
   Auth__Mode: Oidc
   KEYCLOAK_ISSUER_URL: https://auth.cantalay.com/realms/conquest
   KEYCLOAK_AUDIENCE: conquest-api
-  # admin: yönetim paneli API'si /admin/v1 (docs/55; yalnız admin.conquest.cantalay.com Ingress'inden erişilir).
+  # admin: yönetim paneli API'si /admin/v1 (docs/55). Tarayıcıdan yalnız panelin kökeni (app-standards §13, '*' yok).
   Conquest__Roles: api,silo,worker,admin
+  CORS_ORIGINS: https://admin.conquest.cantalay.com
   Conquest__Orleans__Clustering: Localhost
   Conquest__Orleans__Storage: AdoNet
   DB_POOL_MAX: "8"

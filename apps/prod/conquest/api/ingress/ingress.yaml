@@ -1,7 +1,7 @@
 # Yalnız oyun API'si (/v1), gerçek zamanlı kanal (/hubs, WebSocket), dış uptime için /health/live ve mağazaların istediği
 # herkese açık sayfalar dışarı açılır (conquorer docs/42 §3.1): ana sayfa (/), gizlilik/koşullar (/legal), destek formu
-# (/support), uygulamasız hesap silme (/account). /metrics (ServiceMonitor küme içinden kazır) ve /admin bu host'ta yoktur;
-# yönetim API'si yalnız admin.conquest.cantalay.com'da (admin-ingress.yaml, docs/55).
+# (/support), uygulamasız hesap silme (/account) ve yönetim paneli API'si (/admin/v1; Keycloak admin rolü, CORS yalnız
+# https://admin.conquest.cantalay.com, docs/55). /metrics (ServiceMonitor küme içinden kazır) bu host'ta yoktur.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -28,6 +28,13 @@ spec:
                 port:
                   number: 80
           - path: /hubs
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /admin/v1
             pathType: Prefix
             backend:
               service:
