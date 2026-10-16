@@ -28,7 +28,7 @@ runtimeConfig:
 # seviyesindekileri miras vermez (PLATFORM.md §11).
 nginx:
   existingConfigMap: conquest-admin-nginx
-  configRevision: "2"
+  configRevision: "3"
 
 networkPolicy:
   enabled: true
