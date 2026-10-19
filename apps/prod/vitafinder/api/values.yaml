@@ -29,6 +29,8 @@ containerPort: 8080
 
 config:
   NODE_ENV: production
+  # IndexNow (Bing/Yandex) key: public by design, served at vita-pick.com/<key>.txt; the worker submits changed pages daily
+  INDEXNOW_KEY: "5e72ab0d310eaaeea045de9defb28322"
   PORT: "8080"
   PUBLIC_API_URL: https://api.vita-pick.com
   PUBLIC_WEB_URL: https://vita-pick.com
