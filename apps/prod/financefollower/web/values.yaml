@@ -5,8 +5,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/finance-follower-admin
-  tag: "sha-383b672"
-  digest: "sha256:6480471d366b0dd079f285185e6a50b12ae8ddb7d7e8e08930893b948b9267a0"
+  tag: "sha-323c768"
+  digest: "sha256:33c4d70895938e83969fe3b051870f214d2ffedf7a9fd1d8838a04f90572be2c"
   pullPolicy: IfNotPresent
 
 registrySecret:
