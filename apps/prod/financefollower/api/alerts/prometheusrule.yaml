@@ -66,3 +66,22 @@ spec:
           labels: { severity: warning, project: financefollower }
           annotations:
             summary: "Kurum mutabakatında 30 dakikadır defterle fark var (pozisyon ya da sahipsiz emir); Hesaplar kartından inceleyin"
+        - alert: FinanceFollowerSleeveModelStale
+          # Strateji kolu modeli beklenen zamanda hesaplanmadı (BIST sinyal kolunda kapanışa yakın adım atılmadı,
+          # trend/park modelleri günlerdir yenilenmedi): bot o kolda işlem yapmaz; strateji motoru loglarına bakın
+          expr: max by (portfolio, sleeve) (financefollower_sleeve_model_stale) == 1
+          for: 30m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "{{ $labels.portfolio }} / {{ $labels.sleeve }} kolunun modeli bayat; bot bu kolda işlem yapmıyor"
+        - alert: FinanceFollowerSleeveExecutorErrors
+          expr: sum(increase(financefollower_sleeve_runs_total{status="ERROR"}[30m])) > 2
+          for: 5m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "Strateji kolu yürütücüsü 30 dakikada tekrar tekrar hata verdi; emirler aksıyor olabilir"
+        - alert: FinanceFollowerSleeveLossHalt
+          expr: sum(increase(financefollower_sleeve_runs_total{status="LOSS_HALT"}[15m])) > 0
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "Bot günlük zarar kilidinde: portföy bugün sınırdan fazla düştü, yeni alım yapılmıyor"
