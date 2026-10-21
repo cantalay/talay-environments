@@ -26,7 +26,7 @@ runtimeConfig:
 
 nginx:
   existingConfigMap: vitafinder-storefront-nginx
-  configRevision: "7"
+  configRevision: "8"
 
 resources:
   requests:
