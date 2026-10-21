@@ -10,8 +10,8 @@ preStopSleepSeconds: 5
 
 image:
   repository: ghcr.io/cantalay/vitafinder-core
-  tag: "sha-b6a3264"
-  digest: "sha256:d51209f98adb65be668db697800af95b8486dd57f3ebb251ba1b3ca468f60ce1"
+  tag: "sha-459aa5f"
+  digest: "sha256:73c19daf828a8f77af782990c79b901ca795d9ccff3db8f7dadb25b223bfbc94"
   pullPolicy: IfNotPresent
 
 registrySecret:
