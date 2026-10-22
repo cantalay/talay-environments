@@ -24,9 +24,11 @@ runtimeConfig:
   AUTH_REALM: notify
   GRAFANA_URL: https://grafana.cantalay.com
 
-securityHeaders:
-  # MUI (emotion) satır içi stil enjekte eder; e-posta önizlemesi (sandbox'lı srcdoc iframe) dış görseller gösterir.
-  contentSecurityPolicy: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.notify.cantalay.com https://auth.cantalay.com; frame-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+# Güvenlik başlıkları ve CSP kendi nginx yapılandırmasında (nginx/default.conf): chart'ın varsayılanı location'larda
+# başlıkları kaybediyor.
+nginx:
+  existingConfigMap: notify-web-nginx
+  configRevision: "1"
 
 networkPolicy:
   enabled: true

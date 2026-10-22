@@ -3,3 +3,15 @@ kind: Kustomization
 resources:
   - certificate/certificate.yaml
   - ingress/ingress.yaml
+
+configMapGenerator:
+  - name: notify-web-nginx
+    files:
+      - default.conf=nginx/default.conf
+
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    app.kubernetes.io/name: notify-web
+    app.kubernetes.io/part-of: notify
+    talay.io/environment: prod
