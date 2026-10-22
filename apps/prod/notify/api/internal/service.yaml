@@ -1,0 +1,20 @@
+# Cluster içi client API: uygulamalar http://notify-api-internal.notify-api.svc.cluster.local adresinden anahtarla
+# gönderir (pod'un 8081 portu; panel/son kullanıcı yolları bu portta 404). NetworkPolicy values.yaml'da.
+apiVersion: v1
+kind: Service
+metadata:
+  name: notify-api-internal
+  labels:
+    app.kubernetes.io/name: notify-api
+    app.kubernetes.io/part-of: notify
+    talay.io/environment: prod
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: talay-service
+    app.kubernetes.io/instance: notify-api
+  ports:
+    - name: client-api
+      port: 80
+      targetPort: 8081
+      protocol: TCP

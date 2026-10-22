@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: notify-web-tls
+  labels:
+    app.kubernetes.io/name: notify-web
+    app.kubernetes.io/part-of: notify
+    talay.io/environment: prod
+spec:
+  secretName: notify-web-tls
+  dnsNames:
+    - notify.cantalay.com
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt
+  usages:
+    - digital signature
+    - key encipherment

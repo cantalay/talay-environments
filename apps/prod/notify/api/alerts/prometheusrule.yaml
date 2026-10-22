@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: notify-api-alerts
+  labels:
+    app.kubernetes.io/name: notify-api
+    app.kubernetes.io/part-of: notify
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: notify-api
+      rules:
+        - alert: TalayAppDown
+          expr: sum(up{namespace="notify-api"}) == 0
+          for: 5m
+          labels: { severity: critical, project: notify }
+          annotations:
+            summary: "notify-api scrape hedefi 5 dakikadır ayakta değil"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="notify-api"}[15m]) > 3
+          labels: { severity: warning, project: notify }
+          annotations:
+            summary: "notify-api içinde pod 15 dakikada 3'ten fazla yeniden başladı"
+        - alert: TalayAppHighErrorRate
+          expr: |
+            sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="notify-api",http_response_status_code=~"5.."}[5m]))
+              / clamp_min(sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="notify-api"}[5m])), 1e-9) > 0.05
+          for: 10m
+          labels: { severity: warning, project: notify }
+          annotations:
+            summary: "notify-api 5xx oranı %5'in üzerinde"
+        - alert: TalayAppSlow
+          expr: histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{k8s_namespace_name="notify-api"}[5m]))) > 1
+          for: 10m
+          labels: { severity: warning, project: notify }
+          annotations:
+            summary: "notify-api p95 gecikme 1 saniyenin üzerinde"
+        - alert: NotifyVaultUnreachable
+          expr: min(notify_vault_up) == 0
+          for: 10m
+          labels: { severity: warning, project: notify }
+          annotations:
+            summary: "Notify 10 dakikadır Vault'a ulaşamıyor; sağlayıcılar şifreli önbellekteki son değerle çalışıyor (Vault mühürlü mü?)"
+        - alert: NotifyProviderCredentialErrors
+          expr: sum by (app, provider) (increase(notify_push_attempts_total{verdict="config"}[15m])) > 5
+          labels: { severity: warning, project: notify }
+          annotations:
+            summary: "{{ $labels.app }} için {{ $labels.provider }} kimlik/yapılandırma hatası veriyor (anahtar iptal edilmiş ya da yanlış)"

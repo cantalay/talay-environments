@@ -1,0 +1,6 @@
+name: notify-worker
+environment: prod
+namespace: notify-worker
+chartPath: charts/talay-service
+valuesFile: apps/prod/notify/worker/values.yaml
+manifestsPath: apps/prod/notify/worker

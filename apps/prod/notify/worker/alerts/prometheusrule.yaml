@@ -1,0 +1,49 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: notify-worker-alerts
+  labels:
+    app.kubernetes.io/name: notify-worker
+    app.kubernetes.io/part-of: notify
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: notify-worker
+      rules:
+        - alert: TalayAppDown
+          expr: sum(up{namespace="notify-worker"}) == 0
+          for: 5m
+          labels: { severity: critical, project: notify }
+          annotations:
+            summary: "notify-worker 5 dakikadır ayakta değil: bildirimler gönderilmiyor"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="notify-worker"}[15m]) > 3
+          labels: { severity: warning, project: notify }
+          annotations:
+            summary: "notify-worker 15 dakikada 3'ten fazla yeniden başladı"
+        - alert: NotifyWorkerStalled
+          expr: max(notify_worker_loop_age_seconds) > 120
+          for: 5m
+          labels: { severity: critical, project: notify }
+          annotations:
+            summary: "Notify worker döngüsü 2 dakikadır çalışmıyor"
+        - alert: NotifyRealtimeQueueBacklog
+          expr: max(notify_queue_oldest_seconds{lane="realtime"}) > 300
+          for: 5m
+          labels: { severity: critical, project: notify }
+          annotations:
+            summary: "Anlık şeritte 5 dakikadan eski teslimat bekliyor"
+        - alert: NotifyBulkQueueBacklog
+          expr: max(notify_queue_oldest_seconds{lane="bulk"}) > 1800
+          for: 15m
+          labels: { severity: warning, project: notify }
+          annotations:
+            summary: "Toplu şeritte 30 dakikadan eski teslimat bekliyor"
+        - alert: NotifyDeliveryFailureRate
+          expr: |
+            sum by (app, channel) (rate(notify_deliveries_total{status=~"failed|invalid"}[15m]))
+              / clamp_min(sum by (app, channel) (rate(notify_deliveries_total{status=~"sent|failed|invalid"}[15m])), 1e-9) > 0.2
+          for: 15m
+          labels: { severity: warning, project: notify }
+          annotations:
+            summary: "{{ $labels.app }} / {{ $labels.channel }} teslimatlarının %20'den fazlası başarısız"

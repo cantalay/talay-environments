@@ -1,0 +1,88 @@
+# Notify worker: planlayıcı, realtime/bulk gönderim şeritleri (APNs, FCM, web push, SMTP, SMS, Telegram), bakım işleri
+# (kira kurtarma, süre aşımı, sonlandırma, SMS teslim raporları, giden webhook'lar, saklama). Ingress yok; migration yok.
+fullnameOverride: notify-worker
+environment: prod
+partOf: notify
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/notify-api
+  tag: "sha-175501f"
+  digest: "sha256:d2c6ebfc4c47c8db722262c217f37250624c112d91f1bda609aba50171b39ff5"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+runtime:
+  type: java
+  java:
+    agent:
+      enabled: true
+    toolOptions: "-XX:MaxRAMPercentage=70"
+
+containerPort: 8080
+
+serviceAccount:
+  create: true
+  automount: true
+
+config:
+  SPRING_PROFILES_ACTIVE: prod
+  DEPLOYMENT_ENVIRONMENT: prod
+  NOTIFY_ROLE: worker
+  NOTIFY_MIGRATE: "false"
+  NOTIFY_INTERNAL_PORT: "0"
+  NOTIFY_PUBLIC_BASE_URL: https://api.notify.cantalay.com
+  CORS_ORIGINS: https://notify.cantalay.com
+  KEYCLOAK_ISSUER_URI: https://auth.cantalay.com/realms/notify
+  KEYCLOAK_AUDIENCE: notify-api
+  NOTIFY_VAULT_ENABLED: "true"
+  VAULT_ADDR: http://vault-active.vault.svc.cluster.local:8200
+  NOTIFY_IMAGE_TAG: "sha-175501f"
+  DB_POOL_SIZE: "10"
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/notify/worker
+  targetName: notify-worker-secrets
+
+observability:
+  enabled: true
+  serviceName: notify-worker
+  samplingRatio: "0.1"
+
+probes:
+  startup:
+    enabled: true
+    path: /actuator/health/liveness
+    failureThreshold: 60
+    periodSeconds: 5
+  readiness:
+    enabled: true
+    path: /actuator/health/readiness
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /actuator/health/liveness
+    periodSeconds: 20
+
+serviceMonitor:
+  enabled: true
+  path: /actuator/prometheus
+  interval: 30s
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 448Mi
+  limits:
+    memory: 768Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

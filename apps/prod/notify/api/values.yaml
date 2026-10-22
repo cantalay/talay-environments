@@ -1,0 +1,115 @@
+# Notify API (cantalay/notify, docs/architecture.md): panel API'si (/admin/v1), son kullanıcı API'si (/v1/apps/*/me),
+# takip / abonelikten çıkma / sağlayıcı webhook uçları (8080, ingress) ve cluster içi client API (8081, Service
+# notify-api-internal). Migration'ları yalnız bu çalıştırır. Gönderim worker'dadır (aynı imaj, NOTIFY_ROLE=worker).
+fullnameOverride: notify-api
+environment: prod
+partOf: notify
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/notify-api
+  tag: "sha-175501f"
+  digest: "sha256:d2c6ebfc4c47c8db722262c217f37250624c112d91f1bda609aba50171b39ff5"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+runtime:
+  type: java
+  java:
+    agent:
+      enabled: true
+    toolOptions: "-XX:MaxRAMPercentage=70"
+
+containerPort: 8080
+
+# Sağlayıcı kimlik bilgileri pod'dan Vault Kubernetes auth (rol notify, kv/notify/providers/* okuma) ile okunur.
+serviceAccount:
+  create: true
+  automount: true
+
+config:
+  SPRING_PROFILES_ACTIVE: prod
+  DEPLOYMENT_ENVIRONMENT: prod
+  NOTIFY_ROLE: api
+  NOTIFY_PUBLIC_BASE_URL: https://api.notify.cantalay.com
+  CORS_ORIGINS: https://notify.cantalay.com
+  KEYCLOAK_ISSUER_URI: https://auth.cantalay.com/realms/notify
+  KEYCLOAK_AUDIENCE: notify-api
+  NOTIFY_VAULT_ENABLED: "true"
+  VAULT_ADDR: http://vault-active.vault.svc.cluster.local:8200
+  NOTIFY_IMAGE_TAG: "sha-175501f"
+  DB_POOL_SIZE: "8"
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/notify/api
+  targetName: notify-api-secrets
+
+observability:
+  enabled: true
+  serviceName: notify-api
+  samplingRatio: "0.25"
+
+probes:
+  startup:
+    enabled: true
+    path: /actuator/health/liveness
+    failureThreshold: 60
+    periodSeconds: 5
+  readiness:
+    enabled: true
+    path: /actuator/health/readiness
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /actuator/health/liveness
+    periodSeconds: 20
+
+serviceMonitor:
+  enabled: true
+  path: /actuator/prometheus
+  interval: 30s
+
+# Cluster içi client API (8081): yalnız notify'a bağlanan uygulamaların namespace'leri. Yeni uygulama → buraya ekle.
+networkPolicy:
+  enabled: true
+  additionalIngress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: vitafinder-api
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: vitafinder-worker
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: conquest-api
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: financefollower-api
+      ports:
+        - protocol: TCP
+          port: 8081
+
+# Uygulamaların gönderim çağrısı sürümde düşmesin: yeni pod hazır olmadan eskisi kapanmaz.
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 0
+preStopSleepSeconds: 5
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 448Mi
+  limits:
+    memory: 768Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

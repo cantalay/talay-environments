@@ -1,0 +1,46 @@
+# Notify yönetim paneli (cantalay/notify web/): React SPA. Arka ucu https://api.notify.cantalay.com/admin/v1 (sunucu
+# CORS_ORIGINS ile yalnız bu panelin kökenine izin verir); giriş auth-gateway /auth/notify.
+fullnameOverride: notify-web
+environment: prod
+partOf: notify
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/notify-web
+  tag: "sha-175501f"
+  digest: "sha256:e498b79644b8ffdf13ff6142ed4bc1dd072bbcef43e70deab6c41d5236cba301"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+containerPort: 8080
+
+runtimeConfig:
+  API_URL: https://api.notify.cantalay.com
+  AUTH_URL: https://auth.cantalay.com
+  AUTH_REALM: notify
+  GRAFANA_URL: https://grafana.cantalay.com
+
+securityHeaders:
+  # MUI (emotion) satır içi stil enjekte eder; e-posta önizlemesi (sandbox'lı srcdoc iframe) dış görseller gösterir.
+  contentSecurityPolicy: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.notify.cantalay.com https://auth.cantalay.com; frame-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+networkPolicy:
+  enabled: true
+  denyEgress: true
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 96Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

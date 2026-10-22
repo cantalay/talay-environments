@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: notify-web
+  labels:
+    app.kubernetes.io/name: notify-web
+    app.kubernetes.io/part-of: notify
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: notify-web-tls
+      hosts:
+        - notify.cantalay.com
+  rules:
+    - host: notify.cantalay.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: notify-web
+                port:
+                  number: 80
