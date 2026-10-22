@@ -7,8 +7,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/notify-web
-  tag: "sha-175501f"
-  digest: "sha256:e498b79644b8ffdf13ff6142ed4bc1dd072bbcef43e70deab6c41d5236cba301"
+  tag: "sha-900b516"
+  digest: "sha256:82a7bf057d25ffca99c9385263ddcdc111f43b04b34492dd5ccca1b90203c983"
   pullPolicy: IfNotPresent
 
 registrySecret:

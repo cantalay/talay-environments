@@ -7,8 +7,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/notify-api
-  tag: "sha-175501f"
-  digest: "sha256:d2c6ebfc4c47c8db722262c217f37250624c112d91f1bda609aba50171b39ff5"
+  tag: "sha-900b516"
+  digest: "sha256:debd93494f3a4f7e04d73567e290263e1bf7d4523e933085eb7252f4f06b2250"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -41,7 +41,7 @@ config:
   KEYCLOAK_AUDIENCE: notify-api
   NOTIFY_VAULT_ENABLED: "true"
   VAULT_ADDR: http://vault-active.vault.svc.cluster.local:8200
-  NOTIFY_IMAGE_TAG: "sha-175501f"
+  NOTIFY_IMAGE_TAG: "sha-900b516"
   DB_POOL_SIZE: "10"
 
 externalSecret:
