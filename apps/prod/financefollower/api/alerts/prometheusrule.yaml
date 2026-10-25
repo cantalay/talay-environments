@@ -85,3 +85,11 @@ spec:
           labels: { severity: warning, project: financefollower }
           annotations:
             summary: "Bot günlük zarar kilidinde: portföy bugün sınırdan fazla düştü, yeni alım yapılmıyor"
+        - alert: FinanceFollowerSleeveIdleCash
+          # Fon saatinde (09:30-17:30) nakit para piyasası fonuna gitmiyor: park alımı bir kurala takılıyor olabilir
+          # (2026-10-21..23 olayı: sinyal kolu tazelik kuralı parkı kilitledi). Kolların "Şimdi ne yapardı?" planına bakın
+          expr: max by (portfolio) (financefollower_sleeve_idle_cash_pct) > 5
+          for: 45m
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "{{ $labels.portfolio }}: toplamın %{{ $value | printf \"%.0f\" }}'i nakitte bekliyor; para piyasasına gitmiyor"
