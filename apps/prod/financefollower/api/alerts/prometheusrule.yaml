@@ -93,3 +93,17 @@ spec:
           labels: { severity: warning, project: financefollower }
           annotations:
             summary: "{{ $labels.portfolio }}: toplamın %{{ $value | printf \"%.0f\" }}'i nakitte bekliyor; para piyasasına gitmiyor"
+        - alert: FinanceFollowerSleeveOrderBurst
+          # Yürütücü 2 dakikada bir çalışır; olağan gün birkaç emirdir. Saatte 25'ten fazla emir bir döngüye işaret eder
+          # (2026-10-26/27 olayı: park fonu her çalışmada satılıp geri alındı, günde 478 emir)
+          expr: sum(increase(financefollower_sleeve_orders_total[1h])) > 25
+          for: 5m
+          labels: { severity: critical, project: financefollower }
+          annotations:
+            summary: "Bot son bir saatte {{ $value | printf \"%.0f\" }} emir verdi; al-sat döngüsü olabilir (Bot › Kararlar)"
+        - alert: FinanceFollowerSleeveOrderFuse
+          # Emir sigortası (ürün başına günlük bot işlemi sınırı) devreye girdi: bir ürün aynı gün defalarca işlem gördü
+          expr: sum(increase(financefollower_sleeve_guard_trips_total{guard="orderCount"}[30m])) > 0
+          labels: { severity: critical, project: financefollower }
+          annotations:
+            summary: "Bot emir sigortası devrede: bir ürün bugün sınırdan fazla işlem gördü, yeni emir durduruldu"
