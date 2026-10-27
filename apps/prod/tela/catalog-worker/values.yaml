@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/tela-api
-  tag: "sha-b69c559"
-  digest: "sha256:61b58f1b519e8da5b34494639b10d47022b86c17e07f694e10515dd004778af0"
+  tag: "sha-002a223"
+  digest: "sha256:9f9e72ade64f900e3d7974ad45d4470d16a96bb8a6745db6550e59c0ffd2e354"
   pullPolicy: IfNotPresent
 
 registrySecret:
