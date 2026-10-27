@@ -1,0 +1,6 @@
+name: tela-web
+environment: prod
+namespace: tela-web
+chartPath: charts/talay-web
+valuesFile: apps/prod/tela/web/values.yaml
+manifestsPath: apps/prod/tela/web

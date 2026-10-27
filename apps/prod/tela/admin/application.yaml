@@ -1,0 +1,6 @@
+name: tela-admin
+environment: prod
+namespace: tela-admin
+chartPath: charts/talay-web
+valuesFile: apps/prod/tela/admin/values.yaml
+manifestsPath: apps/prod/tela/admin

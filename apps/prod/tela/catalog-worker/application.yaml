@@ -1,0 +1,6 @@
+name: tela-catalog-worker
+environment: prod
+namespace: tela-catalog-worker
+chartPath: charts/talay-service
+valuesFile: apps/prod/tela/catalog-worker/values.yaml
+manifestsPath: apps/prod/tela/catalog-worker

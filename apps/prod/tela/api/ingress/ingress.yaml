@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tela-api
+  labels:
+    app.kubernetes.io/name: tela-api
+    app.kubernetes.io/part-of: tela
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: tela-api-tls
+      hosts:
+        - api.tela.cantalay.com
+  rules:
+    - host: api.tela.cantalay.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tela-api
+                port:
+                  number: 80

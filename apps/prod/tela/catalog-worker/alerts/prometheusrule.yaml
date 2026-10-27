@@ -1,0 +1,46 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: tela-catalog-worker-alerts
+  labels:
+    app.kubernetes.io/name: tela-catalog-worker
+    app.kubernetes.io/part-of: tela
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: tela-catalog-worker
+      rules:
+        - alert: TalayAppDown
+          expr: sum(up{namespace="tela-catalog-worker"}) == 0
+          for: 5m
+          labels: { severity: critical, project: tela }
+          annotations:
+            summary: "tela-catalog-worker scrape hedefi 5 dakikadır ayakta değil"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="tela-catalog-worker"}[15m]) > 3
+          labels: { severity: warning, project: tela }
+          annotations:
+            summary: "tela-catalog-worker içinde pod 15 dakikada 3'ten fazla yeniden başladı"
+        # Katalog beslemesi (tela-docs/docs/09 §7)
+        - alert: TelaCatalogFailedTasks
+          expr: sum(tela_catalog_queue{namespace="tela-catalog-worker",status="FAILED"}) > 100
+          for: 30m
+          labels: { severity: warning, project: tela }
+          annotations:
+            summary: "Katalog: 100'den fazla kalıcı başarısız görev (yönetim → Katalog → Başarısızları yeniden dene; sağlayıcı hatası/ban?)"
+        - alert: TelaCatalogStalled
+          expr: |
+            sum(tela_catalog_queue{namespace="tela-catalog-worker",status="PENDING"}) > 0
+              and on() sum(increase(tela_catalog_tasks_total{namespace="tela-catalog-worker",outcome="ok"}[1h])) == 0
+          for: 30m
+          labels: { severity: warning, project: tela }
+          annotations:
+            summary: "Katalog: kuyrukta iş var ama 1 saattir hiçbir görev tamamlanmadı (catalog.ingest.enabled kapalı mı, sağlayıcı erişilemiyor mu?)"
+        - alert: TelaCatalogProviderRetries
+          expr: |
+            sum by (provider) (increase(tela_catalog_tasks_total{namespace="tela-catalog-worker",outcome="retry"}[30m]))
+              / clamp_min(sum by (provider) (increase(tela_catalog_tasks_total{namespace="tela-catalog-worker"}[30m])), 1) > 0.2
+          for: 30m
+          labels: { severity: warning, project: tela }
+          annotations:
+            summary: "Katalog: {{ $labels.provider }} görevlerinin %20'sinden fazlası yeniden deneniyor (hız sınırı/429?)"

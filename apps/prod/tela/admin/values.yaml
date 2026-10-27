@@ -1,0 +1,47 @@
+# Tela yönetim paneli (admin.tela.cantalay.com). Tek imaj (cantalay/tela-web) iki kökü taşır:
+# /usr/share/nginx/html/{web,admin}; index.html /runtime-config.js'i kendisi yükler.
+fullnameOverride: tela-admin
+environment: prod
+partOf: tela
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/tela-web
+  tag: "sha-7df4e3f"
+  digest: "sha256:c30812a154b5af436783c259b11b3360b73020d24acdaaf2ccaec22dc83351b2"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+containerPort: 8080
+webRoot: /usr/share/nginx/html/admin
+
+runtimeConfig:
+  APP: admin
+  API_URL: https://api.tela.cantalay.com
+  AUTH_URL: https://auth.cantalay.com
+  AUTH_REALM: tela
+
+nginx:
+  existingConfigMap: tela-admin-nginx
+  configRevision: "1"
+
+networkPolicy:
+  enabled: true
+  denyEgress: true
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

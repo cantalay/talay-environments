@@ -1,0 +1,85 @@
+# Tela katalog beslemesi (tela-docs/docs/09): Wikidata + TVmaze (TMDB yazılı lisans + TMDB_API_TOKEN ile), kimlik
+# grafiği, tazelik turu, talep beslemesi, Commons lisans çözümü. Ingress yok; migration yok (api çalıştırır).
+# Hukuki aç/kapa yönetim panelinden: catalog.ingest.enabled, metadata.<sağlayıcı>.enabled, catalog.demand.enabled.
+fullnameOverride: tela-catalog-worker
+environment: prod
+partOf: tela
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/tela-api
+  tag: "sha-3a2d783"
+  digest: "sha256:ee43b573418bff6c130a2d3cc1059434c2c591ee8f7eef3dfb1cf3a6bc1a47a4"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+runtime:
+  type: java
+  java:
+    agent:
+      enabled: true
+    toolOptions: "-XX:MaxRAMPercentage=70"
+
+containerPort: 8080
+
+config:
+  SPRING_PROFILES_ACTIVE: prod
+  SERVER_PORT: "8080"
+  DEPLOYMENT_ENVIRONMENT: prod
+  KEYCLOAK_ISSUER_URI: https://auth.cantalay.com/realms/tela
+  KEYCLOAK_AUDIENCE: tela-api
+  CORS_ORIGINS: https://admin.tela.cantalay.com
+  TELA_MIGRATE: "false"
+  TELA_CATALOG_INGEST: "true"
+  TELA_CATALOG_WORKERS: "3"
+  TELA_CATALOG_CONTACT: ops@cantalay.com
+  DB_POOL_SIZE: "3"
+  TELA_CATALOG_DB_POOL: "6"
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/tela/catalog-worker
+  targetName: tela-catalog-worker-secrets
+
+observability:
+  enabled: true
+  serviceName: tela-catalog-worker
+  samplingRatio: "0.1"
+
+probes:
+  startup:
+    enabled: true
+    path: /actuator/health/liveness
+    failureThreshold: 60
+    periodSeconds: 5
+  readiness:
+    enabled: true
+    path: /actuator/health/readiness
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /actuator/health/liveness
+    periodSeconds: 20
+
+serviceMonitor:
+  enabled: true
+  path: /actuator/prometheus
+  interval: 30s
+
+# Düğümde gerçek bellek kullanımı ~%80 (2026-10-27): yığın ~700 MB ile sınırlı tutulur; ilk yüklemede izlenir.
+resources:
+  requests:
+    cpu: 250m
+    memory: 640Mi
+  limits:
+    memory: 1Gi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

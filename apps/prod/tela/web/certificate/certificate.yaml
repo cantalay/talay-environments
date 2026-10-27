@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tela-web-tls
+  labels:
+    app.kubernetes.io/name: tela-web
+    app.kubernetes.io/part-of: tela
+    talay.io/environment: prod
+spec:
+  secretName: tela-web-tls
+  dnsNames:
+    - tela.cantalay.com
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt
+  usages:
+    - digital signature
+    - key encipherment
