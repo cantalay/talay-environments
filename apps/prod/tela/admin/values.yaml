@@ -7,8 +7,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/tela-web
-  tag: "sha-4f6df2a"
-  digest: "sha256:fe96382a5caf34b2bb69d69ebfc2adf07b88b028c4de31f33eea6c372e2eec8a"
+  tag: "sha-e9d1111"
+  digest: "sha256:fa404a8c57caf3d336f56d176778c306c1cbc83fdcdd7c262acf4ae98ce247d7"
   pullPolicy: IfNotPresent
 
 registrySecret:
