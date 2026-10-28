@@ -35,3 +35,22 @@ spec:
           labels: { severity: warning, project: tela }
           annotations:
             summary: "tela-api p95 gecikme 1 saniyenin üzerinde"
+        - alert: TelaSourceLoadFailing
+          expr: |
+            sum(rate(tela_sources_load_total{outcome!="ok"}[30m]))
+              / clamp_min(sum(rate(tela_sources_load_total[30m])), 1e-9) > 0.5
+            and sum(increase(tela_sources_load_total[30m])) > 10
+          for: 30m
+          labels: { severity: warning, project: tela }
+          annotations:
+            summary: "Kaynak (liste) yüklemelerinin yarısından fazlası 30 dakikadır başarısız"
+            description: "Sağlayıcı engeli (veri merkezi IP), ağ çıkışı ya da ayrıştırıcı sorunu olabilir; outcome etiketine bak."
+        - alert: TelaEpgLookupsFailing
+          expr: |
+            sum(rate(tela_epg_lookups_total{outcome="error"}[30m]))
+              / clamp_min(sum(rate(tela_epg_lookups_total[30m])), 1e-9) > 0.8
+            and sum(increase(tela_epg_lookups_total[30m])) > 50
+          for: 30m
+          labels: { severity: info, project: tela }
+          annotations:
+            summary: "EPG (şimdi/sonra) sorgularının %80'inden fazlası başarısız"
