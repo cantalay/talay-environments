@@ -1,0 +1,6 @@
+name: tela-demo-media
+environment: prod
+namespace: tela-demo-media
+chartPath: charts/talay-service
+valuesFile: apps/prod/tela/demo-media/values.yaml
+manifestsPath: apps/prod/tela/demo-media

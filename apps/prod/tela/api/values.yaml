@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/tela-api
-  tag: "sha-c473b3b"
-  digest: "sha256:906218cc4b86d619527d6eb7431cd885043c09ad9a14766cdc0f1026de106a51"
+  tag: "sha-4636d3b"
+  digest: "sha256:cffa820e87c93b42b8069724df902cef57abab1fd05f09da1c6bf27f1b3413e4"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -37,6 +37,9 @@ config:
   TELA_COUNTRY_HEADER: ""          # GeoIP başlığı veren kenar katmanı gelince (docs/01 §3)
   TELA_CATALOG_INGEST: "false"
   TELA_CATALOG_CONTACT: ops@cantalay.com
+  # Demo paneli (ADR-T024): istemciler bu adresten alır; videolar iç servisten (tela-demo-media) aktarılır
+  TELA_DEMO_PUBLIC_BASE: https://api.tela.cantalay.com/demo
+  TELA_DEMO_MEDIA_URL: http://tela-demo-media.tela-demo-media.svc.cluster.local
   DB_POOL_SIZE: "8"
   TELA_CATALOG_DB_POOL: "6"
 

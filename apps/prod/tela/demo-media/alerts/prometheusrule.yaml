@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: tela-demo-media-alerts
+  labels:
+    app.kubernetes.io/name: tela-demo-media
+    app.kubernetes.io/part-of: tela
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: tela-demo-media
+      rules:
+        - alert: TalayAppDown
+          expr: sum(kube_deployment_status_replicas_available{namespace="tela-demo-media"}) == 0
+          for: 5m
+          labels: { severity: warning, project: tela }
+          annotations:
+            summary: "tela-demo-media 5 dakikadır hazır pod'suz (demo filmleri ve canlı kanallar oynamaz)"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="tela-demo-media"}[15m]) > 3
+          labels: { severity: warning, project: tela }
+          annotations:
+            summary: "tela-demo-media içinde pod 15 dakikada 3'ten fazla yeniden başladı"

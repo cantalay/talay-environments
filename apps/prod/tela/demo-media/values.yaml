@@ -1,0 +1,69 @@
+# Tela demo içeriği (ADR-T024): açık lisanslı Blender filmleri — 720p MP4, 6 sn TS parçaları, kapaklar (nginx, durağan).
+# İmaj tela-core/demo'dan (build-media.sh + Dockerfile). Ingress yok: istemciler https://api.tela.cantalay.com/demo üzerinden
+# alır, tela-api bu servise aktarır (Range geçer). Ölçüm ucu yok; erişilebilirlik kube-state-metrics ile izlenir.
+fullnameOverride: tela-demo-media
+environment: prod
+partOf: tela
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/tela-demo-media
+  tag: "sha-4636d3b"
+  digest: "sha256:8b88cf87a24ca3f2f3d95510a2cfdb0ff082f4c3ecc7b7205192ab3b2118e1b2"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+runtime:
+  type: other
+
+containerPort: 8080
+
+observability:
+  enabled: false
+
+probes:
+  startup:
+    enabled: true
+    path: /healthz
+    failureThreshold: 12
+    periodSeconds: 5
+  readiness:
+    enabled: true
+    path: /healthz
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /healthz
+    periodSeconds: 30
+
+serviceMonitor:
+  enabled: false
+
+# Yalnız tela-api erişir.
+networkPolicy:
+  enabled: true
+  additionalIngress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: tela-api
+      ports:
+        - protocol: TCP
+          port: 8080
+
+resources:
+  requests:
+    cpu: 20m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
