@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/tela-demo-media
-  tag: "sha-4636d3b"
-  digest: "sha256:8b88cf87a24ca3f2f3d95510a2cfdb0ff082f4c3ecc7b7205192ab3b2118e1b2"
+  tag: "sha-f7632d4"
+  digest: "sha256:7d6b0998b69bbf403fed09ec07a42a5878d0f949dc39c3869d6437d733352b86"
   pullPolicy: IfNotPresent
 
 registrySecret:
