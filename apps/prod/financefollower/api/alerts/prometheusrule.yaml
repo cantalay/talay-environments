@@ -102,8 +102,22 @@ spec:
           annotations:
             summary: "Bot son bir saatte {{ $value | printf \"%.0f\" }} emir verdi; al-sat döngüsü olabilir (Bot › Kararlar)"
         - alert: FinanceFollowerSleeveOrderFuse
-          # Emir sigortası (ürün başına günlük bot işlemi sınırı) devreye girdi: bir ürün aynı gün defalarca işlem gördü
-          expr: sum(increase(financefollower_sleeve_guard_trips_total{guard="orderCount"}[30m])) > 0
+          # Emir sigortası (ürün başına günlük bot işlemi sınırı) ya da çevirme sigortası (günlük kur çevirme sınırı)
+          # devreye girdi: bir ürün ya da döviz aynı gün defalarca işlem gördü
+          expr: sum(increase(financefollower_sleeve_guard_trips_total{guard=~"orderCount|fxCount"}[30m])) > 0
           labels: { severity: critical, project: financefollower }
           annotations:
-            summary: "Bot emir sigortası devrede: bir ürün bugün sınırdan fazla işlem gördü, yeni emir durduruldu"
+            summary: "Bot emir/çevirme sigortası devrede: bir ürün ya da döviz bugün sınırdan fazla işlem gördü, yeni emir/çevirme durduruldu"
+        - alert: FinanceFollowerSleevePriceSanity
+          # Fiyat sapma denetimi bir emri durdurdu (veri hatası ya da çok sert hareket); stop susturulmuş olabilir
+          expr: sum(increase(financefollower_sleeve_guard_trips_total{guard="sanity"}[30m])) > 0
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "Bot fiyat sapma kilidi devrede: bir emir (stop olabilir) fiyat sapması nedeniyle verilmedi; karar kaydına bakın"
+        - alert: FinanceFollowerCalendarExpiring
+          # Borsa tatil listesi bitiyor: sonrası tatiller işlem günü sayılır (MarketCalendar, marketcal.py, MarketStatus.tsx)
+          expr: min by (market) (financefollower_calendar_days_left) < 60
+          for: 1h
+          labels: { severity: warning, project: financefollower }
+          annotations:
+            summary: "{{ $labels.market }} tatil takvimi {{ $value }} gün sonra bitiyor; yeni yılın tatilleri eklenmeli"
