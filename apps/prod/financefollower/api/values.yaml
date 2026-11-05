@@ -5,8 +5,8 @@ replicaCount: 1                 # Telegram polling ve olay tüketicisi tek repli
 
 image:
   repository: ghcr.io/cantalay/finance-follower-be
-  tag: "sha-5e7823b"
-  digest: "sha256:6b8c1ec07c6c650ddcfbb0cb06ebc55f9b3ba4bfdaf489fec5f12b734cef8b7d"
+  tag: "sha-d2fcc6b"
+  digest: "sha256:479857d3102f551984ce59dc05f390f6672f64dadd7592c5b9984ca1f2f5517c"
   pullPolicy: IfNotPresent
 
 registrySecret:
