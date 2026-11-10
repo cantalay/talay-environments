@@ -32,7 +32,7 @@ config:
   # docs/56 §2.2: push. iOS → APNs (Vault APNS_AUTH_KEY + aşağıdaki kimlikler), Android → FCM (Vault FCM_SERVICE_ACCOUNT_JSON +
   # Push__Android__*). Anahtar yokken o platformun cihazları atlanır, oyun çalışır.
   Notifications__Sender: Platform
-  Apns__BundleId: com.cantalay.colonyconquest
+  Apns__BundleId: com.cantalay.colony   # iOS paket kimliği (yeni Apple ekibi); Android com.cantalay.colonyconquest
   Conquest__Orleans__Clustering: Localhost
   Conquest__Orleans__Storage: AdoNet
   DB_POOL_MAX: "8"
