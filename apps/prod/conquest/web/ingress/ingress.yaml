@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: conquest-web
+  labels:
+    app.kubernetes.io/name: conquest-web
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: conquest-web-tls
+      hosts:
+        - colony.cantalay.com
+  rules:
+    - host: colony.cantalay.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-web
+                port:
+                  number: 80

@@ -1,0 +1,6 @@
+name: conquest-web
+environment: prod
+namespace: conquest-web
+chartPath: charts/talay-web
+valuesFile: apps/prod/conquest/web/values.yaml
+manifestsPath: apps/prod/conquest/web

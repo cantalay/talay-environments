@@ -1,0 +1,40 @@
+# Colony Conquest indirme sayfası (conquorer web/download, docs/42 §7.4): durağan sayfa, https://colony.cantalay.com.
+# APK GitHub'daki herkese açık cantalay/colony-conquest-releases deposunda; /android ve /apk oraya yönlendirir (nginx/default.conf).
+fullnameOverride: conquest-web
+environment: prod
+partOf: conquest
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/conquest-web
+  tag: "sha-70918bc"
+  digest: "sha256:de23af03912b5a5dca9eec638ac5151f00b4f5e76a43d47340e3f7a33967caae"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+containerPort: 8080
+
+nginx:
+  existingConfigMap: conquest-web-nginx
+  configRevision: "1"
+
+networkPolicy:
+  enabled: true
+  denyEgress: true
+
+resources:
+  requests:
+    cpu: 5m
+    memory: 16Mi
+  limits:
+    memory: 64Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

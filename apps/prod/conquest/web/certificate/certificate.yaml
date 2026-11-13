@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: conquest-web-tls
+  labels:
+    app.kubernetes.io/name: conquest-web
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+spec:
+  secretName: conquest-web-tls
+  dnsNames:
+    - colony.cantalay.com
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt
+  usages:
+    - digital signature
+    - key encipherment
