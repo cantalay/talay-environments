@@ -12,8 +12,21 @@ spec:
     - secretName: tela-api-tls
       hosts:
         - api.tela.cantalay.com
+    - secretName: tela-api-telatv-tls
+      hosts:
+        - api.telatv.net
   rules:
     - host: api.tela.cantalay.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tela-api
+                port:
+                  number: 80
+    - host: api.telatv.net
       http:
         paths:
           - path: /

@@ -14,11 +14,24 @@ spec:
     - secretName: auth-gateway-tls
       hosts:
         - auth.cantalay.com
+    - secretName: auth-gateway-telatv-tls
+      hosts:
+        - auth.telatv.net
   rules:
     - host: auth.cantalay.com
       http:
         paths:
           - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-gateway
+                port:
+                  number: 80
+    - host: auth.telatv.net
+      http:
+        paths:
+          - path: /auth/tela
             pathType: Prefix
             backend:
               service:

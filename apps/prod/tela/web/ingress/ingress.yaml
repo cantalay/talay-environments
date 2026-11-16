@@ -12,8 +12,32 @@ spec:
     - secretName: tela-web-tls
       hosts:
         - tela.cantalay.com
+    - secretName: tela-web-telatv-tls
+      hosts:
+        - telatv.net
+        - www.telatv.net
   rules:
     - host: tela.cantalay.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tela-web
+                port:
+                  number: 80
+    - host: telatv.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tela-web
+                port:
+                  number: 80
+    - host: www.telatv.net
       http:
         paths:
           - path: /
