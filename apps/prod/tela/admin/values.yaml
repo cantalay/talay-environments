@@ -27,7 +27,7 @@ runtimeConfig:
 
 nginx:
   existingConfigMap: tela-admin-nginx
-  configRevision: "2"
+  configRevision: "3"
 
 networkPolicy:
   enabled: true
