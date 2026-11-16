@@ -1,4 +1,4 @@
-# Tela yönetim paneli (admin.tela.cantalay.com). Tek imaj (cantalay/tela-web) iki kökü taşır:
+# Tela yönetim paneli (admin.telatv.net; eski admin.tela.cantalay.com buraya yönlenir). Tek imaj (cantalay/tela-web) iki kökü taşır:
 # /usr/share/nginx/html/{web,admin}; index.html /runtime-config.js'i kendisi yükler.
 fullnameOverride: tela-admin
 environment: prod
@@ -21,13 +21,13 @@ webRoot: /usr/share/nginx/html/admin
 
 runtimeConfig:
   APP: admin
-  API_URL: https://api.tela.cantalay.com
-  AUTH_URL: https://auth.cantalay.com
+  API_URL: https://api.telatv.net
+  AUTH_URL: https://auth.telatv.net
   AUTH_REALM: tela
 
 nginx:
   existingConfigMap: tela-admin-nginx
-  configRevision: "1"
+  configRevision: "2"
 
 networkPolicy:
   enabled: true

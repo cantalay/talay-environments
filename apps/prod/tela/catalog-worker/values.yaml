@@ -32,12 +32,12 @@ config:
   DEPLOYMENT_ENVIRONMENT: prod
   KEYCLOAK_ISSUER_URI: https://auth.cantalay.com/realms/tela
   KEYCLOAK_AUDIENCE: tela-api
-  CORS_ORIGINS: https://admin.tela.cantalay.com
+  CORS_ORIGINS: https://admin.telatv.net,https://admin.tela.cantalay.com
   TELA_MIGRATE: "false"
   TELA_CATALOG_INGEST: "true"
   TELA_CATALOG_WORKERS: "3"
   TELA_CATALOG_CONTACT: ops@cantalay.com
-  TELA_DEMO_PUBLIC_BASE: https://api.tela.cantalay.com/demo
+  TELA_DEMO_PUBLIC_BASE: https://api.telatv.net/demo
   DB_POOL_SIZE: "3"
   TELA_CATALOG_DB_POOL: "6"
 

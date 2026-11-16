@@ -1,4 +1,4 @@
-# Tela izleyici web (tela.cantalay.com). Tek imaj (cantalay/tela-web) iki kökü taşır:
+# Tela izleyici web (telatv.net; eski tela.cantalay.com buraya yönlenir). Tek imaj (cantalay/tela-web) iki kökü taşır:
 # /usr/share/nginx/html/{web,admin}; index.html /runtime-config.js'i kendisi yükler.
 fullnameOverride: tela-web
 environment: prod
@@ -21,8 +21,8 @@ webRoot: /usr/share/nginx/html/web
 
 runtimeConfig:
   APP: web
-  API_URL: https://api.tela.cantalay.com
-  AUTH_URL: https://auth.cantalay.com
+  API_URL: https://api.telatv.net
+  AUTH_URL: https://auth.telatv.net
   AUTH_REALM: tela
 
 nginx:

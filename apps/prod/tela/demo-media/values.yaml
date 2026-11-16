@@ -1,5 +1,5 @@
 # Tela demo içeriği (ADR-T024): açık lisanslı Blender filmleri — 720p MP4, 6 sn TS parçaları, kapaklar (nginx, durağan).
-# İmaj tela-core/demo'dan (build-media.sh + Dockerfile). Ingress yok: istemciler https://api.tela.cantalay.com/demo üzerinden
+# İmaj tela-core/demo'dan (build-media.sh + Dockerfile). Ingress yok: istemciler https://api.telatv.net/demo üzerinden
 # alır, tela-api bu servise aktarır (Range geçer). Ölçüm ucu yok; erişilebilirlik kube-state-metrics ile izlenir.
 fullnameOverride: tela-demo-media
 environment: prod

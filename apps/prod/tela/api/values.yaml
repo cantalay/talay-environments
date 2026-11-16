@@ -32,13 +32,13 @@ config:
   DEPLOYMENT_ENVIRONMENT: prod
   KEYCLOAK_ISSUER_URI: https://auth.cantalay.com/realms/tela
   KEYCLOAK_AUDIENCE: tela-api
-  CORS_ORIGINS: https://tela.cantalay.com,https://admin.tela.cantalay.com
-  TELA_PAIR_URI: https://tela.cantalay.com/pair
+  CORS_ORIGINS: https://telatv.net,https://admin.telatv.net,https://tela.cantalay.com,https://admin.tela.cantalay.com
+  TELA_PAIR_URI: https://telatv.net/pair
   TELA_COUNTRY_HEADER: ""          # GeoIP başlığı veren kenar katmanı gelince (docs/01 §3)
   TELA_CATALOG_INGEST: "false"
   TELA_CATALOG_CONTACT: ops@cantalay.com
   # Demo paneli (ADR-T024): istemciler bu adresten alır; videolar iç servisten (tela-demo-media) aktarılır
-  TELA_DEMO_PUBLIC_BASE: https://api.tela.cantalay.com/demo
+  TELA_DEMO_PUBLIC_BASE: https://api.telatv.net/demo
   TELA_DEMO_MEDIA_URL: http://tela-demo-media.tela-demo-media.svc.cluster.local
   DB_POOL_SIZE: "8"
   TELA_CATALOG_DB_POOL: "6"
