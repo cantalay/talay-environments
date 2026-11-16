@@ -1,5 +1,5 @@
 # Colony Conquest yönetim paneli (cantalay/conquest-admin, conquorer docs/55): React SPA. Arka ucu conquest-api'nin
-# https://api.conquest.cantalay.com/admin/v1 ucudur (sunucu CORS_ORIGINS ile yalnız bu panelin kökenine izin verir).
+# https://api.colonycon.art/admin/v1 ucudur (adres: https://admin.colonycon.art, docs/69) (sunucu CORS_ORIGINS ile yalnız bu panelin kökenine izin verir).
 fullnameOverride: conquest-admin
 environment: prod
 partOf: conquest
@@ -19,8 +19,8 @@ registrySecret:
 containerPort: 8080
 
 runtimeConfig:
-  API_URL: https://api.conquest.cantalay.com
-  AUTH_URL: https://auth.cantalay.com
+  API_URL: https://api.colonycon.art
+  AUTH_URL: https://auth.colonycon.art
   AUTH_REALM: conquest
   ENVIRONMENT: prod
 
@@ -28,7 +28,7 @@ runtimeConfig:
 # seviyesindekileri miras vermez (PLATFORM.md §11).
 nginx:
   existingConfigMap: conquest-admin-nginx
-  configRevision: "3"
+  configRevision: "4"
 
 networkPolicy:
   enabled: true

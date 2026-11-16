@@ -28,7 +28,7 @@ config:
   KEYCLOAK_AUDIENCE: conquest-api
   # admin: yönetim paneli API'si /admin/v1 (docs/55). Tarayıcıdan yalnız panelin kökeni (app-standards §13, '*' yok).
   Conquest__Roles: api,silo,worker,admin
-  CORS_ORIGINS: https://admin.conquest.cantalay.com
+  CORS_ORIGINS: https://admin.colonycon.art
   # docs/56 §2.2: push. iOS → APNs (Vault APNS_AUTH_KEY + aşağıdaki kimlikler), Android → FCM (Vault FCM_SERVICE_ACCOUNT_JSON +
   # Push__Android__*). Anahtar yokken o platformun cihazları atlanır, oyun çalışır.
   Notifications__Sender: Platform

@@ -1,0 +1,20 @@
+# colonycon.art sertifikası bu namespace'te de gerekir: site.yaml'daki Ingress yalnız kendi namespace'indeki secret'ı okur.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: conquest-api-site-tls
+  labels:
+    app.kubernetes.io/name: conquest-api
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+spec:
+  secretName: conquest-api-site-tls
+  dnsNames:
+    - colonycon.art
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt
+  usages:
+    - digital signature
+    - key encipherment

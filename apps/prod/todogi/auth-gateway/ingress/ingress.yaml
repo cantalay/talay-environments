@@ -17,6 +17,9 @@ spec:
     - secretName: auth-gateway-telatv-tls
       hosts:
         - auth.telatv.net
+    - secretName: auth-gateway-colonycon-tls
+      hosts:
+        - auth.colonycon.art
   rules:
     - host: auth.cantalay.com
       http:
@@ -32,6 +35,18 @@ spec:
       http:
         paths:
           - path: /auth/tela
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-gateway
+                port:
+                  number: 80
+    # Colony Conquest'in kendi alan adı (conquorer docs/69): bu host yalnız conquest realm'inin gateway uçlarını açar.
+    # Token issuer'ı Keycloak'ın adresi olarak kalır (https://auth.cantalay.com/realms/conquest); oyuncu bunu görmez.
+    - host: auth.colonycon.art
+      http:
+        paths:
+          - path: /auth/conquest
             pathType: Prefix
             backend:
               service:

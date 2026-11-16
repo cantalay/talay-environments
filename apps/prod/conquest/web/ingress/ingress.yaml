@@ -1,3 +1,6 @@
+# colonycon.art: oyunun herkese açık sitesi. www ve eski colony.cantalay.com aynı pod'a gelir, nginx kalıcı 301 ile
+# colonycon.art'a yollar. /legal, /support ve /account/delete bu host'ta conquest-api'ye gider (conquest/api/ingress/site.yaml;
+# Traefik'te uzun yol önceliklidir).
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -11,8 +14,30 @@ spec:
   tls:
     - secretName: conquest-web-tls
       hosts:
+        - colonycon.art
+        - www.colonycon.art
         - colony.cantalay.com
   rules:
+    - host: colonycon.art
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-web
+                port:
+                  number: 80
+    - host: www.colonycon.art
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-web
+                port:
+                  number: 80
     - host: colony.cantalay.com
       http:
         paths:

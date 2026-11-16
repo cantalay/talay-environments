@@ -9,7 +9,8 @@ metadata:
 spec:
   secretName: conquest-api-tls
   dnsNames:
-    - api.conquest.cantalay.com
+    - api.colonycon.art
+    - api.conquest.cantalay.com   # eski istemciler (OnlineConfig) güncellenene kadar oyun uçları; site sayfaları 301
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer

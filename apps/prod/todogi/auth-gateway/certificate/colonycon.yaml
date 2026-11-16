@@ -1,0 +1,20 @@
+# auth.colonycon.art (yalnız conquest realm'i) ayrı sertifikada: auth.cantalay.com sertifikası olduğu gibi kalır (conquorer docs/69)
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: auth-gateway-colonycon-tls
+  labels:
+    app.kubernetes.io/name: auth-gateway
+    app.kubernetes.io/part-of: todogi
+    talay.io/environment: prod
+spec:
+  secretName: auth-gateway-colonycon-tls
+  dnsNames:
+    - auth.colonycon.art
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt
+  usages:
+    - digital signature
+    - key encipherment

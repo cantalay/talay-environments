@@ -1,7 +1,8 @@
-# Yalnız oyun API'si (/v1), gerçek zamanlı kanal (/hubs, WebSocket), dış uptime için /health/live ve mağazaların istediği
-# herkese açık sayfalar dışarı açılır (conquorer docs/42 §3.1): ana sayfa (/), gizlilik/koşullar (/legal), destek formu
-# (/support), uygulamasız hesap silme (/account) ve yönetim paneli API'si (/admin/v1; Keycloak admin rolü, CORS yalnız
-# https://admin.conquest.cantalay.com, docs/55). /metrics (ServiceMonitor küme içinden kazır) bu host'ta yoktur.
+# Oyun uçları (conquorer docs/42 §3.1, docs/69): API (/v1), gerçek zamanlı kanal (/hubs, WebSocket), yönetim paneli API'si
+# (/admin/v1; Keycloak admin rolü, CORS yalnız https://admin.colonycon.art, docs/55) ve dış uptime için /health/live.
+# api.colonycon.art asıl adrestir; api.conquest.cantalay.com yalnız eski istemci sürümleri için açık kalır (docs/69 §4).
+# Herkese açık sayfalar (yasal, destek, hesap silme) colonycon.art'tadır: site.yaml. Eski host'taki sayfalar: legacy-site.yaml.
+# /metrics (ServiceMonitor küme içinden kazır) dışarı açılmaz.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -15,9 +16,10 @@ spec:
   tls:
     - secretName: conquest-api-tls
       hosts:
+        - api.colonycon.art
         - api.conquest.cantalay.com
   rules:
-    - host: api.conquest.cantalay.com
+    - host: api.colonycon.art
       http:
         paths:
           - path: /v1
@@ -48,28 +50,31 @@ spec:
                 name: conquest-api
                 port:
                   number: 80
-          - path: /legal
+    - host: api.conquest.cantalay.com
+      http:
+        paths:
+          - path: /v1
             pathType: Prefix
             backend:
               service:
                 name: conquest-api
                 port:
                   number: 80
-          - path: /support
-            pathType: Exact
+          - path: /hubs
+            pathType: Prefix
             backend:
               service:
                 name: conquest-api
                 port:
                   number: 80
-          - path: /account/delete
-            pathType: Exact
+          - path: /admin/v1
+            pathType: Prefix
             backend:
               service:
                 name: conquest-api
                 port:
                   number: 80
-          - path: /
+          - path: /health/live
             pathType: Exact
             backend:
               service:

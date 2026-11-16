@@ -11,8 +11,19 @@ spec:
   tls:
     - secretName: conquest-admin-tls
       hosts:
+        - admin.colonycon.art
         - admin.conquest.cantalay.com
   rules:
+    - host: admin.colonycon.art
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-admin
+                port:
+                  number: 80
     - host: admin.conquest.cantalay.com
       http:
         paths:

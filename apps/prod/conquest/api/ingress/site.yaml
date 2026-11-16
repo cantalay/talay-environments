@@ -1,0 +1,43 @@
+# Mağazaların ve uygulamanın açtığı herkese açık sayfalar colonycon.art'ta (docs/42 §3.1, docs/69): gizlilik/koşullar
+# (/legal), destek formu (/support), uygulamasız hesap silme (/account/delete). Sayfaları oyun sunucusu üretir (legal/ tek
+# kaynak). Aynı host'un geri kalanı durağan site (conquest/web); Traefik uzun yolu önce eşler. Formlar POST olduğu için
+# doğrudan sunucuya gelir (istemci IP'si ve hız sınırı, nginx vekili olmadan korunur).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: conquest-api-site
+  labels:
+    app.kubernetes.io/name: conquest-api
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: conquest-api-site-tls
+      hosts:
+        - colonycon.art
+  rules:
+    - host: colonycon.art
+      http:
+        paths:
+          - path: /legal
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /support
+            pathType: Exact
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /account/delete
+            pathType: Exact
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80

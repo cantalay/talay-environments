@@ -1,0 +1,14 @@
+# api.conquest.cantalay.com'daki site sayfaları → https://colonycon.art (kalıcı; GET 301, form gönderimi 308).
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: legacy-site-redirect
+  labels:
+    app.kubernetes.io/name: conquest-api
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+spec:
+  redirectRegex:
+    regex: ^https?://api\.conquest\.cantalay\.com/(.*)$
+    replacement: https://colonycon.art/${1}
+    permanent: true

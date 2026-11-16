@@ -1,4 +1,4 @@
-# Colony Conquest indirme sayfası (conquorer web/download, docs/42 §7.4): durağan sayfa, https://colony.cantalay.com.
+# Colony Conquest sitesi (conquorer web/, docs/69): durağan sayfa, https://colonycon.art (www ve eski colony.cantalay.com → 301).
 # APK GitHub'daki herkese açık cantalay/colony-conquest-releases deposunda; /android ve /apk oraya yönlendirir (nginx/default.conf).
 fullnameOverride: conquest-web
 environment: prod
@@ -20,7 +20,7 @@ containerPort: 8080
 
 nginx:
   existingConfigMap: conquest-web-nginx
-  configRevision: "1"
+  configRevision: "2"
 
 networkPolicy:
   enabled: true

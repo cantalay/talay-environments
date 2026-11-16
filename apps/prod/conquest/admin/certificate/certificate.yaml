@@ -9,7 +9,8 @@ metadata:
 spec:
   secretName: conquest-admin-tls
   dnsNames:
-    - admin.conquest.cantalay.com
+    - admin.colonycon.art
+    - admin.conquest.cantalay.com   # eski adres: kalıcı 301 → admin.colonycon.art (nginx/default.conf)
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer

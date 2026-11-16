@@ -1,0 +1,50 @@
+# Eski adresteki sayfalar (mağaza kayıtları, eski uygulama sürümleri, paylaşılmış bağlantılar) kalıcı olarak colonycon.art'a
+# yönlenir; yol ve sorgu (?lang=) korunur (docs/69 §4). Ana sayfa (/) sitenin ana sayfasına gider.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: conquest-api-legacy-site
+  labels:
+    app.kubernetes.io/name: conquest-api
+    app.kubernetes.io/part-of: conquest
+    talay.io/environment: prod
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: conquest-api-legacy-site-redirect@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: conquest-api-tls
+      hosts:
+        - api.conquest.cantalay.com
+  rules:
+    - host: api.conquest.cantalay.com
+      http:
+        paths:
+          - path: /legal
+            pathType: Prefix
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /support
+            pathType: Exact
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /account/delete
+            pathType: Exact
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name: conquest-api
+                port:
+                  number: 80
