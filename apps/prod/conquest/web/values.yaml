@@ -7,8 +7,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/conquest-web
-  tag: "sha-70918bc"
-  digest: "sha256:de23af03912b5a5dca9eec638ac5151f00b4f5e76a43d47340e3f7a33967caae"
+  tag: "sha-6e021f1"
+  digest: "sha256:b805559ae4c91f60b4484448851e91f341e6d4522ea2abb7855e3f196ec7c879"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -18,9 +18,17 @@ registrySecret:
 
 containerPort: 8080
 
+# /runtime-config.js (conquorer web/site/src/scripts/site.ts, docs/69 §2.1). Boş değer: rozet/e-posta gizli.
+# IOS_URL ve GOOGLE_PLAY_URL mağaza sayfası yayına girince; e-postalar Mailgun kurulunca (docs/69 §5).
+runtimeConfig:
+  IOS_URL: ""
+  GOOGLE_PLAY_URL: ""
+  CONTACT_EMAIL: ""
+  PRESS_EMAIL: ""
+
 nginx:
   existingConfigMap: conquest-web-nginx
-  configRevision: "2"
+  configRevision: "3"
 
 networkPolicy:
   enabled: true
