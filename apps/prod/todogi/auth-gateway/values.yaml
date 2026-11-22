@@ -78,6 +78,12 @@ serviceMonitor:
   enabled: true
   path: /actuator/prometheus
 
+# Tek replika: sürümde yeni pod hazır olmadan eskisi kapanmaz (2026-11-22 sha-b0764fc geçişinde ~45 sn tüm realm'lerde giriş kesildi).
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 0
+preStopSleepSeconds: 5
+
 resources:
   requests:
     cpu: 50m
