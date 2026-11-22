@@ -5,8 +5,8 @@ replicaCount: 1                 # Telegram polling ve olay tüketicisi tek repli
 
 image:
   repository: ghcr.io/cantalay/finance-follower-be
-  tag: "sha-2eccc4d"
-  digest: "sha256:b9d3d24ab730dd0acfc32db7425a2246d6a1fbab641b37fc5c27e3bc268bd760"
+  tag: "sha-4854ce6"
+  digest: "sha256:1e0e66959ca56757d3a596112a7f53025898fcba4144d7d0317ab91c980ab266"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -84,3 +84,16 @@ autoscaling:
 
 podDisruptionBudget:
   enabled: false
+
+# Küme içi kur servisi (/api/internal/v1/rates): yalnız todogi-worker çağırır (servis anahtarıyla).
+networkPolicy:
+  enabled: true
+  allowSameNamespace: true
+  additionalIngress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: todogi-worker
+      ports:
+        - protocol: TCP
+          port: 8080
