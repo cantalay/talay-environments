@@ -25,6 +25,9 @@ containerPort: 8080
 # Env yalnız başlangıçta okunur: realm eklerken bu listeyi güncellemek rollout'u tetikler.
 podAnnotations:
   talay.io/gateway-realms: "vitafinder,financefollower,conquest,notify,tela"
+  # Sunucu ağı 25/465/587 çıkışını kapatıyor; SMTP2GO 2525 + STARTTLS (Vault apps/todogi/keycloak SMTP_*).
+  # Vault'taki SMTP değişince bu değer artırılır (env yalnız açılışta okunur).
+  talay.io/smtp-config: "2026-11-23-2525"
 
 config:
   SERVER_PORT: "8080"
