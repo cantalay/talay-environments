@@ -42,10 +42,10 @@ config:
   GATEWAY_MAIL_REALMS_TODOGI_APPURL: "https://todogi.net"
   GATEWAY_MAIL_REALMS_TODOGI_LOCALES: "tr,en"
   GATEWAY_MAIL_REALMS_TODOGI_DEFAULTLOCALE: "tr"
-  # İP-06 ekranları (/sifre-sifirla, /eposta-onay) canlıya çıkınca açılır:
-  # GATEWAY_MAIL_REALMS_TODOGI_FROM: "noreply@todogi.net"
-  # GATEWAY_MAIL_REALMS_TODOGI_RESETURL: "https://todogi.net/sifre-sifirla"
-  # GATEWAY_MAIL_REALMS_TODOGI_VERIFYURL: "https://todogi.net/eposta-onay"
+  # İP-06a ekranları canlıda (todogi-webapp sha-447d821): gateway e-postaları açık; Keycloak doğrulama e-postası kullanılmaz.
+  GATEWAY_MAIL_REALMS_TODOGI_FROM: "noreply@todogi.net"
+  GATEWAY_MAIL_REALMS_TODOGI_RESETURL: "https://todogi.net/sifre-sifirla"
+  GATEWAY_MAIL_REALMS_TODOGI_VERIFYURL: "https://todogi.net/eposta-onay"
   CORS_ALLOWED_ORIGINS: "https://todogi.net,https://vita-pick.com,https://admin.vita-pick.com,https://finance.cantalay.com,https://admin.colonycon.art,https://notify.cantalay.com,https://telatv.net,https://admin.telatv.net,https://tela.cantalay.com,https://admin.tela.cantalay.com"
 
 externalSecret:
