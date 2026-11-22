@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-server
-  tag: "sha-b05d3d5"
-  digest: "sha256:af108281be1870a0e1cab9a5f3259e6131413a267275d220e659bc06a2f71a08"
+  tag: "sha-e41bff5"
+  digest: "sha256:db7c47009b8935a9118704b38ae975de70c18e30f4ad3f9318a688b58f657485"
   pullPolicy: IfNotPresent
 
 registrySecret:
