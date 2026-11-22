@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: todogi-worker-alerts
+  labels:
+    app.kubernetes.io/name: todogi-worker
+    app.kubernetes.io/part-of: todogi
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: todogi-worker
+      rules:
+        - alert: TalayAppDown
+          expr: sum(up{namespace="todogi-worker"}) == 0
+          for: 5m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: "todogi-worker scrape hedefi 5 dakikadır ayakta değil"
+        - alert: TalayAppCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="todogi-worker"}[15m]) > 3
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi-worker içinde pod 15 dakikada 3'ten fazla yeniden başladı"

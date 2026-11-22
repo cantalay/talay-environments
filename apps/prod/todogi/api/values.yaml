@@ -1,0 +1,100 @@
+# ToDoGi API (cantalay/todogi-be, docs/09-api.md): REST /v1/*, WebSocket /v1/ws, /v1/app/config; ileride OTA /updates/*.
+# NestJS 12 + Fastify, Node 24. Migration'ları açılışta advisory lock ile kendisi koşar (D4, RUN_MIGRATIONS). Worker aynı
+# imajı TODOGI_PROCESS_TYPE=worker ile çalıştırır. Giriş auth-gateway üzerinden (realm todogi, istemci auth).
+fullnameOverride: todogi-api
+environment: prod
+partOf: todogi
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/todogi-server
+  tag: "sha-3a226cb"
+  digest: "sha256:89319ca87937d8b4de6cd1a1ca1e803f7e4c24937438ce579fefec3d68aee73d"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+runtime:
+  type: node
+  node:
+    autoInstrumentation:
+      enabled: true
+
+containerPort: 8080
+
+config:
+  NODE_ENV: production
+  TODOGI_PROCESS_TYPE: api
+  RUN_MIGRATIONS: "true"
+  KEYCLOAK_ISSUER_URL: https://auth.cantalay.com/realms/todogi
+  KEYCLOAK_AUDIENCE: todogi-api
+  # Gateway'in varsayılan realm istemcisi (import edilen eski ad; ileride todogi-gateway'e taşınabilir).
+  KEYCLOAK_ALLOWED_AZP: auth
+  AUTH_GATEWAY_URL: https://auth.cantalay.com/auth/todogi
+  CORS_ORIGINS: https://todogi.net
+  PUBLIC_API_URL: https://api.todogi.net
+  PUBLIC_WEB_URL: https://todogi.net
+  NOTIFY_INTERNAL_URL: http://notify-api-internal.notify-api.svc.cluster.local
+  APP_MIN_VERSION_IOS: "1.0.0"
+  APP_MIN_VERSION_ANDROID: "1.0.0"
+  APP_LATEST_VERSION_IOS: "1.0.0"
+  APP_LATEST_VERSION_ANDROID: "1.0.0"
+  MAINTENANCE_ENABLED: "false"
+  UPDATES_ENABLED: "false"
+  OTEL_NODE_DISABLED_INSTRUMENTATIONS: fs,dns,net
+  OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/todogi/api
+  targetName: todogi-api-secrets
+
+observability:
+  enabled: true
+  serviceName: todogi-api
+  samplingRatio: "0.25"
+
+probes:
+  startup:
+    enabled: true
+    path: /health/startup
+    failureThreshold: 30
+    periodSeconds: 2
+  readiness:
+    enabled: true
+    path: /health/ready
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /health/live
+    periodSeconds: 20
+
+serviceMonitor:
+  enabled: true
+  path: /metrics
+  interval: 30s
+
+ingress:
+  enabled: false
+
+# Sürümde istek (ve WebSocket yeniden bağlanması) düşmesin: yeni pod hazır olmadan eskisi kapanmaz.
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 0
+preStopSleepSeconds: 5
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

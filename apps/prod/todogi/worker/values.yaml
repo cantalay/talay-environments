@@ -1,0 +1,83 @@
+# ToDoGi worker (api ile aynı imaj, TODOGI_PROCESS_TYPE=worker): ay kapanışı, kur yenileme, bildirim zamanlayıcı,
+# hesap silme, davet süresi, outbox yayını, temizlik. Ingress yok; migration yok (api koşar). Sağlık uçları yalnız probe/metrics.
+# notify-api (8081) ve financefollower-api çıkışları karşı tarafların NetworkPolicy'sinde İP-19/İP-17'de açılır.
+fullnameOverride: todogi-worker
+environment: prod
+partOf: todogi
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/todogi-server
+  tag: "sha-3a226cb"
+  digest: "sha256:89319ca87937d8b4de6cd1a1ca1e803f7e4c24937438ce579fefec3d68aee73d"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+runtime:
+  type: node
+  node:
+    autoInstrumentation:
+      enabled: true
+
+containerPort: 8080
+
+config:
+  NODE_ENV: production
+  TODOGI_PROCESS_TYPE: worker
+  RUN_MIGRATIONS: "false"
+  PUBLIC_WEB_URL: https://todogi.net
+  NOTIFY_INTERNAL_URL: http://notify-api-internal.notify-api.svc.cluster.local
+  RATES_URL: http://financefollower-api.financefollower-api.svc.cluster.local/api
+  RATES_REFRESH_SECONDS: "900"
+  OTEL_NODE_DISABLED_INSTRUMENTATIONS: fs,dns,net
+  OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
+
+externalSecret:
+  enabled: true
+  remoteKey: apps/todogi/worker
+  targetName: todogi-worker-secrets
+
+observability:
+  enabled: true
+  serviceName: todogi-worker
+  samplingRatio: "0.10"
+
+probes:
+  startup:
+    enabled: true
+    path: /health/startup
+    failureThreshold: 30
+    periodSeconds: 2
+  readiness:
+    enabled: true
+    path: /health/ready
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /health/live
+    periodSeconds: 20
+
+serviceMonitor:
+  enabled: true
+  path: /metrics
+  interval: 30s
+
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 192Mi
+  limits:
+    memory: 384Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
