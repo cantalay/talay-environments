@@ -1,0 +1,6 @@
+name: todogi-webapp
+environment: prod
+namespace: todogi-webapp
+chartPath: charts/talay-web
+valuesFile: apps/prod/todogi/webapp/values.yaml
+manifestsPath: apps/prod/todogi/webapp

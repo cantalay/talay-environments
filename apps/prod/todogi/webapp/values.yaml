@@ -1,0 +1,47 @@
+# ToDoGi web (cantalay/todogi-app, Expo web export): SPA; API https://api.todogi.net, giriş auth-gateway /auth/todogi.
+# Güvenlik başlıkları, CSP, SPA dönüşü ve /.well-known (iOS/Android uygulama bağlantıları) nginx/default.conf'ta.
+fullnameOverride: todogi-webapp
+environment: prod
+partOf: todogi
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cantalay/todogi-web
+  tag: "sha-468818b"
+  digest: "sha256:5e3bbcd871f1b733f65a67d22ca1ccf892ac8020c0dfb748d6b66955cf4dc73f"
+  pullPolicy: IfNotPresent
+
+registrySecret:
+  enabled: true
+  remoteKey: platform/registry/ghcr
+  targetName: ghcr-pull
+
+containerPort: 8080
+
+runtimeConfig:
+  API_URL: https://api.todogi.net
+  WS_URL: wss://api.todogi.net/v1/ws
+  AUTH_URL: https://auth.cantalay.com
+  AUTH_REALM: todogi
+  BUILD_ID: "sha-468818b"
+
+nginx:
+  existingConfigMap: todogi-webapp-nginx
+  configRevision: "1"
+
+networkPolicy:
+  enabled: true
+  denyEgress: true
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 64Mi
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
