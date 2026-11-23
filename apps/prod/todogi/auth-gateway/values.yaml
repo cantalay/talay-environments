@@ -4,8 +4,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-auth-gateway
-  tag: "sha-b0764fc"
-  digest: "sha256:6081da442fb0f5b0a03776b12b0ff1796668f1664d29f841e5f0fa3cbbb0a715"
+  tag: "sha-006cdb0"
+  digest: "sha256:3239e74be4df0811d2162e97f771b9b25f1685faa23eb4223f65a502df66affc"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -37,6 +37,8 @@ config:
   GATEWAY_REALMS_CONQUEST_PLATFORMLOGIN: "true"
   # Varsayılan realm (todogi): mobil uzun oturum için offline token (İP-04).
   KEYCLOAK_OFFLINE_ACCESS: "true"
+  # Giriş yöntemleri (GET/DELETE /auth/todogi/identities, /social mode=link) yalnız varsayılan realm (todogi) için.
+  KEYCLOAK_IDENTITY_METHODS: "true"
   # Kayıt sınırı tüm realm'lerde (varsayılan IP başına 20/saat); mobil CGNAT'ta ortak IP'li oyuncular için 60.
   GATEWAY_REGISTER_LIMIT_PER_IP: "60"
   # ToDoGi hesap e-postaları (SMTP_* ve GATEWAY_ACTION_TOKEN_SECRETS Vault apps/todogi/keycloak'ta).
