@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-server
-  tag: "sha-9ed0787"
-  digest: "sha256:e925a1663b2c4c1cef58b0c3739834b9eb43e6f5617064b0443fdaea511aa8c3"
+  tag: "sha-bdcd615"
+  digest: "sha256:94db4fb135ae6c9c23bb375ee7345c13029b0d28c5a6fbe2060b05cda4ee641f"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -46,6 +46,8 @@ config:
   # Web istemcisinin BUILD_ID'siyle aynı tutulur (webapp values runtimeConfig.BUILD_ID): farklıysa "yeni sürüm hazır" şeridi.
   WEB_BUILD_ID: "sha-8033c6b"
   UPDATES_ENABLED: "false"
+  # İP-16: borç araçları, varlıklar (kur servisi ilk çekimden sonra görünür), yıllık şablonlar
+  APP_FLAGS: '{"finance.debtTools":true,"finance.assets":true,"finance.annualTemplates":true}'
   OTEL_NODE_DISABLED_INSTRUMENTATIONS: fs,dns,net
   OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
 

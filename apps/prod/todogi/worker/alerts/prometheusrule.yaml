@@ -21,3 +21,28 @@ spec:
           labels: { severity: warning, project: todogi }
           annotations:
             summary: "todogi-worker içinde pod 15 dakikada 3'ten fazla yeniden başladı"
+    - name: todogi-finance
+      rules:
+      - alert: TodogiMonthClosePending
+        expr: max(todogi_month_close_pending{namespace="todogi-worker"}) > 0
+        for: 15m
+        labels:
+          severity: critical
+          project: todogi
+        annotations:
+          summary: 'todogi: {{ $value }} alanın geçen ayı kapanmadı (yerel 01:00 geçti) — worker logu finance.month_close_failed'
+      - alert: TodogiMonthCloseFailed
+        expr: sum(increase(todogi_month_close_total{namespace="todogi-worker",result="failed"}[30m])) > 0
+        labels:
+          severity: warning
+          project: todogi
+        annotations:
+          summary: 'todogi: ay kapanışı başarısız oldu (30 dk) — run-job month_close --space <id> --month <ay> --dry-run ile incele'
+      - alert: TodogiMonthCloseScannerDown
+        expr: time() - max(todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",job="month_close"}) > 93600
+        for: 10m
+        labels:
+          severity: critical
+          project: todogi
+        annotations:
+          summary: 'todogi: month_close tarayıcısı 26 saattir başarılı tur yapmadı'
