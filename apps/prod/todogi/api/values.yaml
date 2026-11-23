@@ -44,7 +44,7 @@ config:
   APP_LATEST_VERSION_ANDROID: "1.0.0"
   MAINTENANCE_ENABLED: "false"
   # Web istemcisinin BUILD_ID'siyle aynı tutulur (webapp values runtimeConfig.BUILD_ID): farklıysa "yeni sürüm hazır" şeridi.
-  WEB_BUILD_ID: "sha-5361d41"
+  WEB_BUILD_ID: "sha-8033c6b"
   UPDATES_ENABLED: "false"
   OTEL_NODE_DISABLED_INSTRUMENTATIONS: fs,dns,net
   OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
