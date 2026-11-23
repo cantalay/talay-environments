@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-server
-  tag: "sha-ea03d71"
-  digest: "sha256:8ea0d58384ae30091141271860e6a1611db8909991c4bd93d0d88dd1b153fd15"
+  tag: "sha-ddfb5f4"
+  digest: "sha256:dca9066046579abf763ae50f324b243383fd7ee5a360602d80034afdd93c310b"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -44,7 +44,7 @@ config:
   APP_LATEST_VERSION_ANDROID: "1.0.0"
   MAINTENANCE_ENABLED: "false"
   # Web istemcisinin BUILD_ID'siyle aynı tutulur (webapp values runtimeConfig.BUILD_ID): farklıysa "yeni sürüm hazır" şeridi.
-  WEB_BUILD_ID: "sha-3116575"
+  WEB_BUILD_ID: "sha-13ee3e5"
   UPDATES_ENABLED: "false"
   OTEL_NODE_DISABLED_INSTRUMENTATIONS: fs,dns,net
   OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
