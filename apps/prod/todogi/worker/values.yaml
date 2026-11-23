@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-server
-  tag: "sha-193bde3"
-  digest: "sha256:1464f91f6c12621ff45e8013739a4b81dc3710af3a9cf1dafeddd35f63b1deff"
+  tag: "sha-358faf7"
+  digest: "sha256:45efad31b2f8b1bb2a82a56e659e448f463c714c2277906af38c1316bcf8a546"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -33,6 +33,9 @@ config:
   NOTIFY_INTERNAL_URL: http://notify-api-internal.notify-api.svc.cluster.local
   RATES_URL: http://financefollower-api.financefollower-api.svc.cluster.local/api
   RATES_REFRESH_SECONDS: "900"
+  RATES_STALE_AFTER_SECONDS: "86400"
+  RATES_TIMEOUT_MS: "5000"
+  RATES_ALWAYS_CODES: USD,EUR,XAU_G24,XAU_CEYREK
   OTEL_NODE_DISABLED_INSTRUMENTATIONS: fs,dns,net
   OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
 
