@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-server
-  tag: "sha-bdcd615"
-  digest: "sha256:94db4fb135ae6c9c23bb375ee7345c13029b0d28c5a6fbe2060b05cda4ee641f"
+  tag: "sha-28955d0"
+  digest: "sha256:b8321056a43be962ed6e96a4a0fae3d44515f65090f9d794ce5519923fe7c568"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -44,7 +44,7 @@ config:
   APP_LATEST_VERSION_ANDROID: "1.0.0"
   MAINTENANCE_ENABLED: "false"
   # Web istemcisinin BUILD_ID'siyle aynı tutulur (webapp values runtimeConfig.BUILD_ID): farklıysa "yeni sürüm hazır" şeridi.
-  WEB_BUILD_ID: "sha-8033c6b"
+  WEB_BUILD_ID: "sha-df3f014"
   UPDATES_ENABLED: "false"
   # İP-16: borç araçları, varlıklar (kur servisi ilk çekimden sonra görünür), yıllık şablonlar
   APP_FLAGS: '{"finance.debtTools":true,"finance.assets":true,"finance.annualTemplates":true}'
