@@ -91,6 +91,13 @@ networkPolicy:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: financefollower-api
+        # ToDoGi (İP-19): api cihaz kaydı + davet e-postası (İP-11), worker bildirim gönderici / device_sync.
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: todogi-api
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: todogi-worker
       ports:
         - protocol: TCP
           port: 8081
