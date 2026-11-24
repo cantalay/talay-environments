@@ -45,6 +45,10 @@ config:
   OTEL_NODE_DISABLED_INSTRUMENTATIONS: fs,dns,net
   OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
 
+# Vault'a yeni sır eklenince pod env'i yenilensin diye artırılır (ExternalSecret secret'ı günceller ama pod yeniden başlamaz).
+podAnnotations:
+  talay.io/secrets-rev: "2026-11-24-ip20"
+
 externalSecret:
   enabled: true
   remoteKey: apps/todogi/worker
