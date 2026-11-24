@@ -188,3 +188,23 @@ spec:
           annotations:
             summary: "todogi: gönderilmeyi bekleyen {{ $value }} bildirim (eşik 1.000)"
             runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todoginotificationqueuebacklog
+        # İP-20 hesap silme (yasal yükümlülük) ve veri dışa aktarma
+        - alert: TodogiAccountDeletionStuck
+          expr: max(todogi_account_deletion_pending{namespace="todogi-worker"}) > 0
+          for: 30m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: "todogi: vakti gelmiş hesap silme 30 dakikadır bitmedi (yasal yükümlülük)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiaccountdeletionstuck
+        - alert: TodogiAccountDeletionFailed
+          expr: sum(increase(todogi_account_deletions_total{namespace="todogi-worker",result="failed"}[15m])) > 0
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi: son 15 dakikada başarısız hesap silme adımı var"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiaccountdeletionfailed
+        - alert: TodogiDataExportFailed
+          expr: sum(increase(todogi_data_exports_total{namespace="todogi-worker",result="failed"}[1h])) > 0
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi: son 1 saatte başarısız veri dışa aktarma var"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogidataexportfailed

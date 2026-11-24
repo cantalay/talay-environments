@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-server
-  tag: "sha-810d642"
-  digest: "sha256:4ca48eff4ecf4b7e3a87d08a47461799e55cb3d62e9f9ad85befa3b13b4959bb"
+  tag: "sha-4d625e0"
+  digest: "sha256:8970b1785b87cf975d9979af601e1e7023592d7505b6f3738f9dbdf26aa7cb5e"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -36,6 +36,9 @@ config:
   AUTH_GATEWAY_URL: https://auth.cantalay.com/auth/todogi
   CORS_ORIGINS: https://todogi.net
   PUBLIC_API_URL: https://api.todogi.net
+  # İP-20 hesap silme: bekleme yok (girişli akış hemen siler); KVKK formu bu kutuya (D11 yönlendirmesi ürün sahibinde)
+  ACCOUNT_DELETION_GRACE_DAYS: "0"
+  KVKK_INBOX_EMAIL: kvkk@todogi.net
   PUBLIC_WEB_URL: https://todogi.net
   NOTIFY_INTERNAL_URL: http://notify-api-internal.notify-api.svc.cluster.local
   APP_MIN_VERSION_IOS: "1.0.0"
