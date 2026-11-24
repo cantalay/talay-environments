@@ -1,0 +1,23 @@
+# İP-22 ölçüt 4 — alarm alıcısı denemesi (GEÇİCİ). Varsayılan olarak kustomization'a GİRMEZ.
+# Kullanım: api/kustomization.yaml `resources`'a `alerts/synthetic-test.yaml` ekle → push → Argo sync → ~2 dk sonra
+# Telegram'da "TodogiSyntheticTest" (firing) görülür → satırı kaldır → push → "resolved" gelir. Ayrıntı: todogi-be
+# docs/RUNBOOK.md "Alarm alıcısı denemesi".
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: todogi-synthetic-test
+  labels:
+    app.kubernetes.io/name: todogi-api
+    app.kubernetes.io/part-of: todogi
+    talay.io/environment: prod
+spec:
+  groups:
+    - name: todogi-synthetic
+      rules:
+        - alert: TodogiSyntheticTest
+          expr: vector(1)
+          for: 2m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi: sentetik deneme alarmı (İP-22 ölçüt 4) — gerçek sorun yok, kural kaldırılınca kapanır"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogisynthetictest

@@ -1,3 +1,8 @@
+# ToDoGi api alarmları (İP-22 §2.3). Kaynak: İP-03 şablonu + todogi-be `deploy/alerts/*.yaml` (İP-10, İP-17; İP-22'de
+# buraya taşındı, be'deki kopya kaldırıldı). Birim testleri: `tests.yaml` (kustomization'a girmez) —
+# `todogi-be/scripts/alerts-test.sh` ile `promtool check rules` + `promtool test rules`.
+# Her alarmın `runbook_url`'i todogi-be docs/RUNBOOK.md'deki aynı adlı başlığa gider. Alıcı: Alertmanager → Telegram
+# (kv/platform/alertmanager; `severity=info` sessiz).
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -16,22 +21,139 @@ spec:
           labels: { severity: critical, project: todogi }
           annotations:
             summary: "todogi-api scrape hedefi 5 dakikadır ayakta değil"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#talayappdown
         - alert: TalayAppCrashLooping
           expr: increase(kube_pod_container_status_restarts_total{namespace="todogi-api"}[15m]) > 3
           labels: { severity: warning, project: todogi }
           annotations:
             summary: "todogi-api içinde pod 15 dakikada 3'ten fazla yeniden başladı"
-        - alert: TalayAppHighErrorRate
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#talayappcrashlooping
+        # Şablonun TalayAppHighErrorRate'i yerine (aynı ifade + en az ~3 istek/dk koşulu; önem critical, GZ2).
+        - alert: TodogiApi5xxHigh
           expr: |
-            sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="todogi-api",http_response_status_code=~"5.."}[5m]))
-              / clamp_min(sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="todogi-api"}[5m])), 1e-9) > 0.05
+            (
+              sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="todogi-api",http_response_status_code=~"5.."}[5m]))
+                / clamp_min(sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="todogi-api"}[5m])), 1e-9)
+            ) > 0.05
+            and on () sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="todogi-api"}[5m])) > 0.05
+          for: 10m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: "todogi-api 5xx oranı {{ $value | humanizePercentage }} (> %5, 10 dk)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiapi5xxhigh
+        # Şablonun TalayAppSlow'u yerine (aynı eşik + trafik koşulu, GZ2).
+        - alert: TodogiApiSlow
+          expr: |
+            histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{k8s_namespace_name="todogi-api"}[5m]))) > 1
+            and on () sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="todogi-api"}[5m])) > 0.05
           for: 10m
           labels: { severity: warning, project: todogi }
           annotations:
-            summary: "todogi-api 5xx oranı %5'in üzerinde"
-        - alert: TalayAppSlow
-          expr: histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{k8s_namespace_name="todogi-api"}[5m]))) > 1
+            summary: "todogi-api p95 gecikme {{ $value | humanizeDuration }} (> 1 sn, 10 dk)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiapislow
+        - alert: TodogiRedisDown
+          expr: min by (namespace) (todogi_redis_up{namespace="todogi-api"}) == 0
+          for: 5m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: "{{ $labels.namespace }}: Redis bağlantısı 5 dakikadır yok (gerçek zaman, hız sınırı, önbellek)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiredisdown
+        - alert: TodogiDbPoolSaturated
+          expr: max by (namespace) (todogi_db_pool_connections{namespace="todogi-api",state="waiting"}) > 0
           for: 10m
           labels: { severity: warning, project: todogi }
           annotations:
-            summary: "todogi-api p95 gecikme 1 saniyenin üzerinde"
+            summary: "{{ $labels.namespace }}: PostgreSQL havuzunda 10 dakikadır bağlantı bekleyen sorgu var"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogidbpoolsaturated
+        - alert: TodogiMemoryNearLimit
+          expr: |
+            max by (namespace, pod, container) (container_memory_working_set_bytes{namespace="todogi-api",container!="",container!="POD"})
+              / on (namespace, pod, container)
+            max by (namespace, pod, container) (kube_pod_container_resource_limits{namespace="todogi-api",resource="memory"})
+              > 0.9
+          for: 15m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "{{ $labels.pod }}: bellek limitin {{ $value | humanizePercentage }}'i (> %90, 15 dk)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogimemorynearlimit
+
+    # İP-10 (be deploy/alerts/realtime.yaml'dan taşındı; ifadeler aynen).
+    - name: todogi-realtime
+      rules:
+        # Kimliksiz kapanışlarda ani artış (belirteç yenileme hatası, JWKS sorunu, saldırı).
+        - alert: TodogiWsAuthClosesSpike
+          expr: sum(rate(todogi_ws_closes_total{namespace="todogi-api",code="4401"}[10m])) > 0.1
+          for: 10m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi WebSocket 4401 kapanışları dakikada 6'nın üzerinde"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiwsauthclosesspike
+        # İmleci 30 günü ya da temizlik ufkunu geçen eşitlemeler (istemci tam yükleme yapar). info: Telegram'a gitmez.
+        - alert: TodogiSyncExpiredRate
+          expr: |
+            sum(rate(todogi_sync_requests_total{namespace="todogi-api",result="expired"}[1h]))
+              / clamp_min(sum(rate(todogi_sync_requests_total{namespace="todogi-api"}[1h])), 1e-9) > 0.2
+          for: 30m
+          labels: { severity: info, project: todogi }
+          annotations:
+            summary: "todogi /v1/sync isteklerinin %20'den fazlası 410 (imleç süresi dolmuş)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogisyncexpiredrate
+
+    # İP-17 (be deploy/alerts/rates.yaml'dan taşındı; api kısmı).
+    - name: todogi-rates
+      rules:
+        # api: desteklenen bir kod için ne Redis'te ne rate_snapshot'ta değer var (kullanıcı "Kur alınamadı" görüyor).
+        - alert: TodogiRatesFallbackNone
+          expr: sum(increase(todogi_rate_reader_fallback_total{namespace="todogi-api",level="none"}[30m])) > 0
+          for: 10m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: 'todogi api: desteklenen bir kod için hiç kur yok (Redis ve rate_snapshot boş)'
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiratesfallbacknone
+
+    # auth-gateway (ns gateway, ortak servis; yalnız realm todogi satırları).
+    - name: todogi-auth
+      rules:
+        - alert: TodogiAuthMailFailing
+          expr: sum(increase(auth_gateway_mail_sent_total{realm="todogi",result="error"}[15m])) > 3
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi: gateway e-postaları (doğrulama/şifre sıfırlama) 15 dk'da {{ $value | humanize }} kez gönderilemedi"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiauthmailfailing
+
+    # İP-24 OTA modülü (api içinde). Metrikler İP-24 ile gelir; o zamana kadar seri yok → alarm üretmez (GZ6).
+    - name: todogi-ota
+      rules:
+        - alert: TodogiOtaManifestErrors
+          expr: |
+            (
+              sum(increase(http_server_request_duration_seconds_count{k8s_namespace_name="todogi-api",http_route="/updates/manifest",http_response_status_code=~"5.."}[10m]))
+                / clamp_min(sum(increase(http_server_request_duration_seconds_count{k8s_namespace_name="todogi-api",http_route="/updates/manifest"}[10m])), 1)
+            ) > 0.05
+            and on () sum(increase(http_server_request_duration_seconds_count{k8s_namespace_name="todogi-api",http_route="/updates/manifest"}[10m])) >= 20
+          for: 10m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: "todogi OTA: /updates/manifest 5xx oranı {{ $value | humanizePercentage }} (> %5)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiotamanifesterrors
+        # Gösterge yalnız UPDATES_ENABLED=true iken yayımlanır (İP-24 sözleşmesi, GZ6).
+        - alert: TodogiOtaSigningNotReady
+          expr: max(todogi_ota_signing_ready{namespace="todogi-api"}) == 0
+          for: 5m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: "todogi OTA açık ama imza anahtarı hazır değil (manifest imzalanamıyor)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiotasigningnotready
+        - alert: TodogiOtaAdminAuthFailures
+          expr: sum(increase(todogi_ota_admin_auth_failures_total{namespace="todogi-api"}[15m])) > 10
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi OTA yayın ucunda 15 dk'da {{ $value | humanize }} reddedilen belirteç"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiotaadminauthfailures
+        - alert: TodogiOtaStorageLarge
+          expr: max(todogi_ota_storage_bytes{namespace="todogi-api"}) > 300e6
+          for: 1h
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi OTA varlıkları {{ $value | humanize1024 }}B (> 300 MB; saklama işi çalışmıyor olabilir)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiotastoragelarge

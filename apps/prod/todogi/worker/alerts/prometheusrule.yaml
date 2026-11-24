@@ -1,3 +1,7 @@
+# ToDoGi worker alarmları (İP-22 §2.3). Kaynak: İP-03 şablonu + todogi-be `deploy/alerts/*.yaml` (İP-10, İP-16, İP-17;
+# İP-22'de buraya taşındı, be'deki kopya kaldırıldı). Birim testleri: `tests.yaml` (kustomization'a girmez) —
+# `todogi-be/scripts/alerts-test.sh` ile `promtool check rules` + `promtool test rules`.
+# Her alarmın `runbook_url`'i todogi-be docs/RUNBOOK.md'deki aynı adlı başlığa gider.
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -16,33 +20,145 @@ spec:
           labels: { severity: critical, project: todogi }
           annotations:
             summary: "todogi-worker scrape hedefi 5 dakikadır ayakta değil"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#talayappdown
         - alert: TalayAppCrashLooping
           expr: increase(kube_pod_container_status_restarts_total{namespace="todogi-worker"}[15m]) > 3
           labels: { severity: warning, project: todogi }
           annotations:
             summary: "todogi-worker içinde pod 15 dakikada 3'ten fazla yeniden başladı"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#talayappcrashlooping
+        # Zamanlayıcı dakikada bir yazar. Pod ayakta ama zamanlayıcı durmuş (migration bekleniyor, olay döngüsü kilitli)
+        # ya da seri hiç yok (absent; yalnız heartbeat için, İP-22 §4).
+        - alert: TodogiWorkerStalled
+          expr: |
+            (time() - max(todogi_worker_heartbeat_timestamp_seconds{namespace="todogi-worker"})) > 300
+            or absent(todogi_worker_heartbeat_timestamp_seconds{namespace="todogi-worker"})
+          for: 5m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: "todogi-worker zamanlayıcısı 5 dakikadır kalp atışı yazmıyor (ay kapanışı, outbox, kur durur)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiworkerstalled
+        # İş başına son başarı > 3 × beklenen aralık (en az 5 dk). heartbeat (TodogiWorkerStalled), month_close
+        # (todogi-finance) ve rate_refresh (todogi-rates) kendi alarmlarında; burada tekrar edilmez (GZ3).
+        # Uygulamanın `job` etiketi ServiceMonitor kazımasında hedefin `job`'u ile çakışır → Prometheus'ta `exported_job`
+        # (honorLabels yok; GZ5).
+        - alert: TodogiJobNotSucceeding
+          expr: |
+            (time() - max by (exported_job) (todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job="nudge_evaluator"})) > 300
+            or (time() - max by (exported_job) (todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job="cash_shortfall"})) > 900
+            or (time() - max by (exported_job) (todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job=~"invite_expiry|subscription_renewal"})) > 10800
+            or (time() - max by (exported_job) (todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job=~"cleanup|rate_catalog"})) > 259200
+          for: 15m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi-worker işi {{ $labels.exported_job }}: son başarılı çalışma {{ $value | humanizeDuration }} önce (> 3 × aralık)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogijobnotsucceeding
+        - alert: TodogiRedisDown
+          expr: min by (namespace) (todogi_redis_up{namespace="todogi-worker"}) == 0
+          for: 5m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: "{{ $labels.namespace }}: Redis bağlantısı 5 dakikadır yok (gerçek zaman, hız sınırı, önbellek)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiredisdown
+        - alert: TodogiDbPoolSaturated
+          expr: max by (namespace) (todogi_db_pool_connections{namespace="todogi-worker",state="waiting"}) > 0
+          for: 10m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "{{ $labels.namespace }}: PostgreSQL havuzunda 10 dakikadır bağlantı bekleyen sorgu var"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogidbpoolsaturated
+        - alert: TodogiMemoryNearLimit
+          expr: |
+            max by (namespace, pod, container) (container_memory_working_set_bytes{namespace="todogi-worker",container!="",container!="POD"})
+              / on (namespace, pod, container)
+            max by (namespace, pod, container) (kube_pod_container_resource_limits{namespace="todogi-worker",resource="memory"})
+              > 0.9
+          for: 15m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "{{ $labels.pod }}: bellek limitin {{ $value | humanizePercentage }}'i (> %90, 15 dk)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogimemorynearlimit
+
+    # İP-16 (be deploy/alerts/finance.yaml'dan; 2026-11-24 PR #39 ile eklenmişti, ifadeler aynen).
     - name: todogi-finance
       rules:
-      - alert: TodogiMonthClosePending
-        expr: max(todogi_month_close_pending{namespace="todogi-worker"}) > 0
-        for: 15m
-        labels:
-          severity: critical
-          project: todogi
-        annotations:
-          summary: 'todogi: {{ $value }} alanın geçen ayı kapanmadı (yerel 01:00 geçti) — worker logu finance.month_close_failed'
-      - alert: TodogiMonthCloseFailed
-        expr: sum(increase(todogi_month_close_total{namespace="todogi-worker",result="failed"}[30m])) > 0
-        labels:
-          severity: warning
-          project: todogi
-        annotations:
-          summary: 'todogi: ay kapanışı başarısız oldu (30 dk) — run-job month_close --space <id> --month <ay> --dry-run ile incele'
-      - alert: TodogiMonthCloseScannerDown
-        expr: time() - max(todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",job="month_close"}) > 93600
-        for: 10m
-        labels:
-          severity: critical
-          project: todogi
-        annotations:
-          summary: 'todogi: month_close tarayıcısı 26 saattir başarılı tur yapmadı'
+        # Kapanmamış ay = yanlış Borç (devredenler yeni aya geçmedi): alan yerel 1. günü 01:00'i geçti ve hâlâ açık.
+        - alert: TodogiMonthClosePending
+          expr: max(todogi_month_close_pending{namespace="todogi-worker"}) > 0
+          for: 15m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: 'todogi: {{ $value }} alanın geçen ayı kapanmadı (yerel 01:00 geçti) — worker logu finance.month_close_failed'
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogimonthclosepending
+        - alert: TodogiMonthCloseFailed
+          expr: sum(increase(todogi_month_close_total{namespace="todogi-worker",result="failed"}[30m])) > 0
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: 'todogi: ay kapanışı başarısız oldu (30 dk) — run-job month_close --space <id> --month <ay> --dry-run ile incele'
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogimonthclosefailed
+        # Tarayıcı dakikalık; 26 saattir başarılı tur yoksa (worker ya da zamanlayıcı çalışmıyor).
+        # İP-22 düzeltmesi: `job="month_close"` prod'da hiç eşleşmiyordu (etiket `exported_job`, GZ5).
+        - alert: TodogiMonthCloseScannerDown
+          expr: time() - max(todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job="month_close"}) > 93600
+          for: 10m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: 'todogi: month_close tarayıcısı 26 saattir başarılı tur yapmadı'
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogimonthclosescannerdown
+
+    # İP-17 (be deploy/alerts/rates.yaml'dan taşındı; worker kısmı, ifadeler aynen).
+    - name: todogi-rates
+      rules:
+        # 09 §17.1: yaş = son başarılı çekimden bu yana (`todogi_rate_age_seconds`); piyasa `asOf` yaşı
+        # (`todogi_rate_asof_age_seconds`) hafta sonu doğal olarak > 24 sa olduğundan alarma bağlanmaz.
+        - alert: TodogiRatesStale
+          expr: max by (code) (todogi_rate_age_seconds{namespace="todogi-worker"}) > 86400
+          for: 30m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi kur {{ $labels.code }}: 24 saattir tazelenemedi (ekranlarda 'kur eski' rozeti)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiratesstale
+        # Anahtar yanlış/rotasyon sonrası eşitlenmedi: ilk turda (seri 0'dan başlar).
+        - alert: TodogiRatesAuthFailed
+          expr: sum(increase(todogi_rate_refresh_total{namespace="todogi-worker",result="auth"}[30m])) > 0
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: 'todogi kur servisi anahtarı reddedildi (401/403) — Vault kv/apps/todogi/worker RATES_API_KEY'
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiratesauthfailed
+        - alert: TodogiRatesUpstreamErrors
+          expr: |
+            sum(increase(todogi_rate_refresh_total{namespace="todogi-worker",result=~"error|auth"}[1h]))
+              / clamp_min(sum(increase(todogi_rate_refresh_total{namespace="todogi-worker",result=~"ok|error|auth"}[1h])), 1)
+              > 0.5
+          for: 15m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: 'todogi kur tazeleme turlarının yarısından fazlası 1 saattir başarısız'
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiratesupstreamerrors
+
+    # İP-10 (be deploy/alerts/realtime.yaml'dan taşındı; worker kısmı, ifade aynen).
+    - name: todogi-realtime
+      rules:
+        # Ölçüt 19 / 09 §22: en eski yayımlanmamış outbox satırı ≥ 60 sn (yayımcı durdu, Redis kesik, kilit takıldı).
+        - alert: TodogiOutboxBacklog
+          expr: max(todogi_outbox_oldest_age_seconds{namespace="todogi-worker"}) >= 60
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi outbox: yayımlanmamış olay 60 sn'den eski (yayımcı ya da Redis)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogioutboxbacklog
+
+    # İP-19 bildirim gönderimi. Metrik İP-19 ile gelir; o zamana kadar seri yok → alarm üretmez (GZ6).
+    - name: todogi-notify
+      rules:
+        - alert: TodogiNotifyFailing
+          expr: |
+            (
+              sum(increase(todogi_notify_sent_total{namespace=~"todogi-(api|worker)",result="error"}[15m]))
+                / clamp_min(sum(increase(todogi_notify_sent_total{namespace=~"todogi-(api|worker)"}[15m])), 1)
+            ) > 0.2
+            and on () sum(increase(todogi_notify_sent_total{namespace=~"todogi-(api|worker)"}[15m])) >= 10
+          for: 15m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi bildirimlerinin {{ $value | humanizePercentage }}'i notify'a iletilemedi (15 dk)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todoginotifyfailing
