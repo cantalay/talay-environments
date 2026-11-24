@@ -4,3 +4,19 @@ resources:
   - certificate/certificate.yaml
   - ingress/ingress.yaml
   - alerts/prometheusrule.yaml
+  # alerts/tests.yaml (promtool birim testleri) ve alerts/synthetic-test.yaml (geçici alıcı denemesi) bilerek yok.
+
+# Projenin tek Grafana panosu (İP-22 §2.2): Grafana sidecar `grafana_dashboard: "1"` etiketini tüm namespace'lerde
+# tarar, `grafana_folder` → "todogi" klasörü.
+configMapGenerator:
+  - name: todogi-api-dashboard
+    files:
+      - todogi.json=dashboard/dashboard.json
+    options:
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        grafana_folder: todogi
+
+generatorOptions:
+  disableNameSuffixHash: true
