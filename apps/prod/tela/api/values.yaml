@@ -22,7 +22,7 @@ runtime:
   java:
     agent:
       enabled: true
-    toolOptions: "-XX:MaxRAMPercentage=70"
+    toolOptions: "-Xms64m -Xmx320m -XX:+UseG1GC -XX:G1PeriodicGCInterval=60000"
 
 containerPort: 8080
 
