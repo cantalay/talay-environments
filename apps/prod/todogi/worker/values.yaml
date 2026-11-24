@@ -8,8 +8,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-server
-  tag: "sha-810d642"
-  digest: "sha256:4ca48eff4ecf4b7e3a87d08a47461799e55cb3d62e9f9ad85befa3b13b4959bb"
+  tag: "sha-4d625e0"
+  digest: "sha256:8970b1785b87cf975d9979af601e1e7023592d7505b6f3738f9dbdf26aa7cb5e"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -30,6 +30,12 @@ config:
   TODOGI_PROCESS_TYPE: worker
   RUN_MIGRATIONS: "false"
   PUBLIC_WEB_URL: https://todogi.net
+  PUBLIC_API_URL: https://api.todogi.net
+  # İP-20 hesap silme: Keycloak kullanıcısını yönetim API'siyle siler (talay-identity todogi-worker, yalnız manage-users;
+  # sır Vault apps/todogi/worker KEYCLOAK_ADMIN_CLIENT_SECRET). Yedek saklama süresi silme e-postası metninde geçer.
+  KEYCLOAK_ISSUER_URL: https://auth.cantalay.com/realms/todogi
+  KEYCLOAK_ADMIN_CLIENT_ID: todogi-worker
+  BACKUP_RETENTION_DAYS: "30"
   NOTIFY_INTERNAL_URL: http://notify-api-internal.notify-api.svc.cluster.local
   RATES_URL: http://financefollower-api.financefollower-api.svc.cluster.local/api
   RATES_REFRESH_SECONDS: "900"

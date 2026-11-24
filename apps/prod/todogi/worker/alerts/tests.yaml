@@ -422,3 +422,53 @@ tests:
             exp_annotations:
               summary: "todogi: gönderilmeyi bekleyen 1500 bildirim (eşik 1.000)"
               runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todoginotificationqueuebacklog
+
+  # ── İP-20 hesap silme / dışa aktarma ─────────────────────────────────────────────────────────────────────────
+  - name: TodogiAccountDeletionStuck — bekleyen silme 30 dk sürer
+    interval: 1m
+    input_series:
+      - series: 'todogi_account_deletion_pending{namespace="todogi-worker", pod="todogi-worker-0"}'
+        values: '0x5 1x40'
+    alert_rule_test:
+      - eval_time: 20m
+        alertname: TodogiAccountDeletionStuck
+        exp_alerts: []
+      - eval_time: 40m
+        alertname: TodogiAccountDeletionStuck
+        exp_alerts:
+          - exp_labels: { severity: critical, project: todogi }
+            exp_annotations:
+              summary: "todogi: vakti gelmiş hesap silme 30 dakikadır bitmedi (yasal yükümlülük)"
+              runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiaccountdeletionstuck
+  - name: TodogiAccountDeletionFailed — başarısız adım
+    interval: 1m
+    input_series:
+      - series: 'todogi_account_deletions_total{namespace="todogi-worker", pod="todogi-worker-0", result="failed", source="web"}'
+        values: '0x10 1x10'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: TodogiAccountDeletionFailed
+        exp_alerts: []
+      - eval_time: 13m
+        alertname: TodogiAccountDeletionFailed
+        exp_alerts:
+          - exp_labels: { severity: warning, project: todogi }
+            exp_annotations:
+              summary: "todogi: son 15 dakikada başarısız hesap silme adımı var"
+              runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogiaccountdeletionfailed
+  - name: TodogiDataExportFailed — başarısız dışa aktarma
+    interval: 1m
+    input_series:
+      - series: 'todogi_data_exports_total{namespace="todogi-worker", pod="todogi-worker-0", result="failed"}'
+        values: '0x10 1x10'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: TodogiDataExportFailed
+        exp_alerts: []
+      - eval_time: 13m
+        alertname: TodogiDataExportFailed
+        exp_alerts:
+          - exp_labels: { severity: warning, project: todogi }
+            exp_annotations:
+              summary: "todogi: son 1 saatte başarısız veri dışa aktarma var"
+              runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogidataexportfailed
