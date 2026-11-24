@@ -938,24 +938,146 @@
     },
     {
       "id": 17,
+      "type": "timeseries",
+      "title": "Ödeme görevi türetme p95 — gün görünümü (İP-18)",
+      "gridPos": {
+        "x": 0,
+        "y": 30,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "drawStyle": "line",
+            "axisSoftMin": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "noValue": "veri yok",
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(todogi_payment_task_view_duration_seconds_bucket{namespace=\"todogi-api\"}[5m])))",
+          "legendFormat": "p95"
+        },
+        {
+          "refId": "B",
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(todogi_payment_task_view_duration_seconds_bucket{namespace=\"todogi-api\"}[5m])))",
+          "legendFormat": "p50"
+        }
+      ],
+      "description": "GET /v1/periods/day içinde izleyenin tüm alanları için ödeme görevi türetme süresi."
+    },
+    {
+      "id": 18,
+      "type": "timeseries",
+      "title": "Ödeme görevinden ters kayıt — sonuç (İP-18)",
+      "gridPos": {
+        "x": 12,
+        "y": 30,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "showPoints": "never",
+            "spanNulls": false,
+            "drawStyle": "bars",
+            "axisSoftMin": 0,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "noValue": "veri yok"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "sum"
+          ],
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (result) (increase(todogi_payment_task_reverse_total{namespace=\"todogi-api\"}[1h]))",
+          "legendFormat": "{{result}}"
+        }
+      ]
+    },
+    {
+      "id": 19,
       "type": "row",
       "title": "Gerçek zaman (İP-10)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 30,
+        "y": 38,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 18,
+      "id": 20,
       "type": "timeseries",
       "title": "WebSocket bağlantıları — platform",
       "gridPos": {
         "x": 0,
-        "y": 31,
+        "y": 39,
         "w": 8,
         "h": 8
       },
@@ -1008,12 +1130,12 @@
       ]
     },
     {
-      "id": 19,
+      "id": 21,
       "type": "timeseries",
       "title": "Bağlantı açılış (ready) / kapanış — kod",
       "gridPos": {
         "x": 8,
-        "y": 31,
+        "y": 39,
         "w": 8,
         "h": 8
       },
@@ -1072,12 +1194,12 @@
       ]
     },
     {
-      "id": 20,
+      "id": 22,
       "type": "timeseries",
       "title": "Gecikme commit → soket p50 / p95 (hedef p95 < 500 ms)",
       "gridPos": {
         "x": 16,
-        "y": 31,
+        "y": 39,
         "w": 8,
         "h": 8
       },
@@ -1152,12 +1274,12 @@
       ]
     },
     {
-      "id": 21,
+      "id": 23,
       "type": "timeseries",
       "title": "Outbox en eski yaş (alarm ≥ 60 sn)",
       "gridPos": {
         "x": 0,
-        "y": 39,
+        "y": 47,
         "w": 8,
         "h": 8
       },
@@ -1227,12 +1349,12 @@
       ]
     },
     {
-      "id": 22,
+      "id": 24,
       "type": "timeseries",
       "title": "Yayın ve yazma — varlık",
       "gridPos": {
         "x": 8,
-        "y": 39,
+        "y": 47,
         "w": 8,
         "h": 8
       },
@@ -1291,12 +1413,12 @@
       ]
     },
     {
-      "id": 23,
+      "id": 25,
       "type": "timeseries",
       "title": "/v1/sync — sonuç",
       "gridPos": {
         "x": 16,
-        "y": 39,
+        "y": 47,
         "w": 8,
         "h": 8
       },
@@ -1351,25 +1473,25 @@
       "description": "expired = 410 (imleç süresi dolmuş); istemci tam yükleme yapar."
     },
     {
-      "id": 24,
+      "id": 26,
       "type": "row",
       "title": "Worker işleri",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 47,
+        "y": 55,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 25,
+      "id": 27,
       "type": "timeseries",
       "title": "İş çalışmaları — iş × sonuç (1 sa)",
       "gridPos": {
         "x": 0,
-        "y": 48,
+        "y": 56,
         "w": 12,
         "h": 8
       },
@@ -1421,12 +1543,12 @@
       ]
     },
     {
-      "id": 26,
+      "id": 28,
       "type": "timeseries",
       "title": "İş süresi p95 — iş",
       "gridPos": {
         "x": 12,
-        "y": 48,
+        "y": 56,
         "w": 12,
         "h": 8
       },
@@ -1480,12 +1602,12 @@
       ]
     },
     {
-      "id": 27,
+      "id": 29,
       "type": "bargauge",
       "title": "Son başarıdan beri — iş (eşik: 3 × aralık, TodogiJobNotSucceeding)",
       "gridPos": {
         "x": 0,
-        "y": 56,
+        "y": 64,
         "w": 12,
         "h": 8
       },
@@ -1543,12 +1665,12 @@
       "description": "Uygulamanın `job` etiketi Prometheus'ta `exported_job` (hedefin job'u ile çakışma). Beklenen aralıklar: heartbeat/month_close 1 dk, nudge_evaluator 30 sn, cash_shortfall 5 dk, rate_refresh 15 dk, invite_expiry/subscription_renewal 1 sa, cleanup/rate_catalog 1 gün."
     },
     {
-      "id": 28,
+      "id": 30,
       "type": "stat",
       "title": "Kalp atışı (alarm > 5 dk)",
       "gridPos": {
         "x": 12,
-        "y": 56,
+        "y": 64,
         "w": 4,
         "h": 8
       },
@@ -1606,12 +1728,12 @@
       ]
     },
     {
-      "id": 29,
+      "id": 31,
       "type": "stat",
       "title": "Kapanış süresi p95 (alan)",
       "gridPos": {
         "x": 16,
-        "y": 56,
+        "y": 64,
         "w": 4,
         "h": 8
       },
@@ -1649,12 +1771,12 @@
       ]
     },
     {
-      "id": 30,
+      "id": 32,
       "type": "stat",
       "title": "Kapanmamış ay (hedef 0)",
       "gridPos": {
         "x": 20,
-        "y": 56,
+        "y": 64,
         "w": 4,
         "h": 8
       },
@@ -1707,12 +1829,12 @@
       ]
     },
     {
-      "id": 31,
+      "id": 33,
       "type": "timeseries",
       "title": "Ay kapanışı — sonuç (1 sa)",
       "gridPos": {
         "x": 0,
-        "y": 64,
+        "y": 72,
         "w": 8,
         "h": 8
       },
@@ -1765,12 +1887,12 @@
       "description": "closed / reclosed / noop / failed (İP-16)."
     },
     {
-      "id": 32,
+      "id": 34,
       "type": "timeseries",
       "title": "Kur yaşı — kod (alarm > 24 sa)",
       "gridPos": {
         "x": 8,
-        "y": 64,
+        "y": 72,
         "w": 8,
         "h": 8
       },
@@ -1841,12 +1963,12 @@
       "description": "asOf (piyasa) yaşı hafta sonu doğal olarak büyür, alarm yok; aşağıdaki tazeleme sonucu ile birlikte okuyun."
     },
     {
-      "id": 33,
+      "id": 35,
       "type": "timeseries",
       "title": "Kur tazeleme — sonuç (1 sa)",
       "gridPos": {
         "x": 16,
-        "y": 64,
+        "y": 72,
         "w": 8,
         "h": 8
       },
@@ -1898,12 +2020,12 @@
       ]
     },
     {
-      "id": 34,
+      "id": 36,
       "type": "timeseries",
       "title": "Bildirim gönderimi — kategori × sonuç (İP-19)",
       "gridPos": {
         "x": 0,
-        "y": 72,
+        "y": 80,
         "w": 12,
         "h": 8
       },
@@ -1958,12 +2080,12 @@
       "description": "İP-19 canlıya çıkana kadar veri yok."
     },
     {
-      "id": 35,
+      "id": 37,
       "type": "timeseries",
       "title": "Bildirim niyetleri — kategori (dağıtıcı öncesi)",
       "gridPos": {
         "x": 12,
-        "y": 72,
+        "y": 80,
         "w": 12,
         "h": 8
       },
@@ -2015,25 +2137,25 @@
       ]
     },
     {
-      "id": 36,
+      "id": 38,
       "type": "row",
       "title": "Kaynaklar ($namespace)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 80,
+        "y": 88,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 37,
+      "id": 39,
       "type": "timeseries",
       "title": "CPU (çekirdek) — kesikli: istek",
       "gridPos": {
         "x": 0,
-        "y": 81,
+        "y": 89,
         "w": 12,
         "h": 8
       },
@@ -2092,12 +2214,12 @@
       "description": "CPU limiti yok (talay kuralı); kısıtlama paneli throttling gösterir."
     },
     {
-      "id": 38,
+      "id": 40,
       "type": "timeseries",
       "title": "Bellek (working set) — kesikli: istek / limit",
       "gridPos": {
         "x": 12,
-        "y": 81,
+        "y": 89,
         "w": 12,
         "h": 8
       },
@@ -2161,12 +2283,12 @@
       ]
     },
     {
-      "id": 39,
+      "id": 41,
       "type": "timeseries",
       "title": "CPU kısıtlama (throttled periyot/sn, hedef 0)",
       "gridPos": {
         "x": 0,
-        "y": 89,
+        "y": 97,
         "w": 8,
         "h": 8
       },
@@ -2219,12 +2341,12 @@
       ]
     },
     {
-      "id": 40,
+      "id": 42,
       "type": "timeseries",
       "title": "Yeniden başlatma (1 sa)",
       "gridPos": {
         "x": 8,
-        "y": 89,
+        "y": 97,
         "w": 8,
         "h": 8
       },
@@ -2277,12 +2399,12 @@
       ]
     },
     {
-      "id": 41,
+      "id": 43,
       "type": "timeseries",
       "title": "DB havuzu — durum",
       "gridPos": {
         "x": 16,
-        "y": 89,
+        "y": 97,
         "w": 8,
         "h": 8
       },
@@ -2336,12 +2458,12 @@
       "description": "waiting > 0 (10 dk) → TodogiDbPoolSaturated. Havuz: api 8, worker 4."
     },
     {
-      "id": 42,
+      "id": 44,
       "type": "stat",
       "title": "Redis (api)",
       "gridPos": {
         "x": 0,
-        "y": 97,
+        "y": 105,
         "w": 6,
         "h": 4
       },
@@ -2394,12 +2516,12 @@
       ]
     },
     {
-      "id": 43,
+      "id": 45,
       "type": "stat",
       "title": "Redis (worker)",
       "gridPos": {
         "x": 6,
-        "y": 97,
+        "y": 105,
         "w": 6,
         "h": 4
       },
@@ -2452,12 +2574,12 @@
       ]
     },
     {
-      "id": 44,
+      "id": 46,
       "type": "stat",
       "title": "Scrape hedefleri ayakta",
       "gridPos": {
         "x": 12,
-        "y": 97,
+        "y": 105,
         "w": 6,
         "h": 4
       },
@@ -2511,12 +2633,12 @@
       ]
     },
     {
-      "id": 45,
+      "id": 47,
       "type": "stat",
       "title": "Uygulanmış migration",
       "gridPos": {
         "x": 18,
-        "y": 97,
+        "y": 105,
         "w": 6,
         "h": 4
       },
@@ -2553,25 +2675,25 @@
       ]
     },
     {
-      "id": 46,
+      "id": 48,
       "type": "row",
       "title": "Kimlik (auth-gateway, realm todogi)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 101,
+        "y": 109,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 47,
+      "id": 49,
       "type": "timeseries",
       "title": "Gateway eylemleri — eylem × sonuç",
       "gridPos": {
         "x": 0,
-        "y": 102,
+        "y": 110,
         "w": 8,
         "h": 8
       },
@@ -2625,12 +2747,12 @@
       ]
     },
     {
-      "id": 48,
+      "id": 50,
       "type": "timeseries",
       "title": "Giriş yöntemi istekleri — eylem × sonuç",
       "gridPos": {
         "x": 8,
-        "y": 102,
+        "y": 110,
         "w": 8,
         "h": 8
       },
@@ -2684,12 +2806,12 @@
       ]
     },
     {
-      "id": 49,
+      "id": 51,
       "type": "timeseries",
       "title": "E-posta gönderimi — şablon × sonuç (alarm: 15 dk'da > 3 hata)",
       "gridPos": {
         "x": 16,
-        "y": 102,
+        "y": 110,
         "w": 8,
         "h": 8
       },
@@ -2741,25 +2863,25 @@
       ]
     },
     {
-      "id": 50,
+      "id": 52,
       "type": "row",
       "title": "Mobil sürümler ve OTA (İP-24)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 110,
+        "y": 118,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 51,
+      "id": 53,
       "type": "table",
       "title": "Etkin güncelleme — kanal × platform × runtime",
       "gridPos": {
         "x": 0,
-        "y": 111,
+        "y": 119,
         "w": 12,
         "h": 8
       },
@@ -2798,12 +2920,12 @@
       "description": "İP-24 canlıya çıkana kadar veri yok."
     },
     {
-      "id": 52,
+      "id": 54,
       "type": "timeseries",
       "title": "Manifest yanıtları — sonuç",
       "gridPos": {
         "x": 12,
-        "y": 111,
+        "y": 119,
         "w": 12,
         "h": 8
       },
@@ -2858,12 +2980,12 @@
       "description": "update / directive / no_update / hata."
     },
     {
-      "id": 53,
+      "id": 55,
       "type": "timeseries",
       "title": "Varlık bant genişliği",
       "gridPos": {
         "x": 0,
-        "y": 119,
+        "y": 127,
         "w": 8,
         "h": 8
       },
@@ -2917,12 +3039,12 @@
       ]
     },
     {
-      "id": 54,
+      "id": 56,
       "type": "timeseries",
       "title": "Varlık önbellek ıskalama",
       "gridPos": {
         "x": 8,
-        "y": 119,
+        "y": 127,
         "w": 8,
         "h": 8
       },
@@ -2976,12 +3098,12 @@
       ]
     },
     {
-      "id": 55,
+      "id": 57,
       "type": "stat",
       "title": "İmza hazır",
       "gridPos": {
         "x": 16,
-        "y": 119,
+        "y": 127,
         "w": 4,
         "h": 8
       },
@@ -3034,12 +3156,12 @@
       ]
     },
     {
-      "id": 56,
+      "id": 58,
       "type": "stat",
       "title": "OTA depolama (alarm > 300 MB)",
       "gridPos": {
         "x": 20,
-        "y": 119,
+        "y": 127,
         "w": 4,
         "h": 8
       },
@@ -3096,12 +3218,12 @@
       ]
     },
     {
-      "id": 57,
+      "id": 59,
       "type": "barchart",
       "title": "İstemci sürümü dağılımı (api istek logları, 1 sa)",
       "gridPos": {
         "x": 0,
-        "y": 127,
+        "y": 135,
         "w": 24,
         "h": 7
       },
@@ -3146,25 +3268,25 @@
       "description": "`client` alanı X-Todogi-Client başlığından (platform/sürüm (build)). OTA update kimliği İP-24 ile eklenecek."
     },
     {
-      "id": 58,
+      "id": 60,
       "type": "row",
       "title": "Log ve iz",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 134,
+        "y": 142,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 59,
+      "id": 61,
       "type": "timeseries",
       "title": "Hata/fatal log satırı (5 dk) — namespace",
       "gridPos": {
         "x": 0,
-        "y": 135,
+        "y": 143,
         "w": 12,
         "h": 8
       },
@@ -3216,12 +3338,12 @@
       ]
     },
     {
-      "id": 60,
+      "id": 62,
       "type": "timeseries",
       "title": "JSON ayrıştırılamayan satır (5 dk, api/worker hedef 0)",
       "gridPos": {
         "x": 12,
-        "y": 135,
+        "y": 143,
         "w": 12,
         "h": 8
       },
@@ -3273,12 +3395,12 @@
       ]
     },
     {
-      "id": 61,
+      "id": 63,
       "type": "logs",
       "title": "Son hata satırları (trace_sampled=true olanlar Tempo izine açılır)",
       "gridPos": {
         "x": 0,
-        "y": 143,
+        "y": 151,
         "w": 24,
         "h": 9
       },
@@ -3302,12 +3424,12 @@
       ]
     },
     {
-      "id": 62,
+      "id": 64,
       "type": "table",
       "title": "Son hatalı izler (todogi-api)",
       "gridPos": {
         "x": 0,
-        "y": 152,
+        "y": 160,
         "w": 12,
         "h": 8
       },
@@ -3325,12 +3447,12 @@
       ]
     },
     {
-      "id": 63,
+      "id": 65,
       "type": "table",
       "title": "Son izler (todogi-worker işleri)",
       "gridPos": {
         "x": 12,
-        "y": 152,
+        "y": 160,
         "w": 12,
         "h": 8
       },
