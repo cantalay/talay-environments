@@ -23,7 +23,7 @@ runtimeConfig:
   WS_URL: wss://api.todogi.net/v1/ws
   AUTH_URL: https://auth.cantalay.com
   AUTH_REALM: todogi
-  BUILD_ID: "sha-37666aa"
+  BUILD_ID: "sha-a2e85c8"
 
 nginx:
   existingConfigMap: todogi-webapp-nginx
