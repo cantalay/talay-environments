@@ -27,7 +27,7 @@ runtimeConfig:
 
 nginx:
   existingConfigMap: todogi-webapp-nginx
-  configRevision: "3"
+  configRevision: "4"
 
 networkPolicy:
   enabled: true
