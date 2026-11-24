@@ -21,6 +21,9 @@ runtime:
 containerPort: 8080
 
 config:
+  # glibc her iş parçacığına ayrı arena açıyor; pandas işleri belleği parçalayıp RSS'i 1,2 GB'ta tutuyordu
+  MALLOC_ARENA_MAX: "2"
+  MALLOC_TRIM_THRESHOLD_: "131072"
   PORT: "8080"
   DEPLOYMENT_ENVIRONMENT: prod
   REDIS_KEY_PREFIX: "financefollower:"
