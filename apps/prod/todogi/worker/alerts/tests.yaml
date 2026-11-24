@@ -367,3 +367,58 @@ tests:
       - eval_time: 55m
         alertname: TodogiNotifyFailing
         exp_alerts: []
+
+  - name: TodogiNotificationLag — p95 > 5 dk tetikler, kısa gecikme tetiklemez
+    interval: 1m
+    input_series:
+      - series: 'todogi_notification_dispatch_lag_seconds_bucket{namespace="todogi-worker", le="60"}'
+        values: '0+10x20 200+0x40'
+      - series: 'todogi_notification_dispatch_lag_seconds_bucket{namespace="todogi-worker", le="900"}'
+        values: '0+10x20 200+10x40'
+      - series: 'todogi_notification_dispatch_lag_seconds_bucket{namespace="todogi-worker", le="+Inf"}'
+        values: '0+10x20 200+10x40'
+    alert_rule_test:
+      - eval_time: 15m
+        alertname: TodogiNotificationLag
+        exp_alerts: []
+      - eval_time: 55m
+        alertname: TodogiNotificationLag
+        exp_alerts:
+          - exp_labels: { severity: warning, project: todogi }
+            exp_annotations:
+              summary: "todogi bildirim gecikmesi p95 14m 18s (eşik 5 dk)"
+              runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todoginotificationlag
+
+  - name: TodogiReminderSchedulerStalled — 5 dk + 5 dk başarı yok
+    interval: 1m
+    input_series:
+      - series: 'todogi_job_last_success_timestamp_seconds{namespace="todogi-worker", exported_job="reminder_scheduler"}'
+        values: '0+60x5 300x20'
+    alert_rule_test:
+      - eval_time: 6m
+        alertname: TodogiReminderSchedulerStalled
+        exp_alerts: []
+      - eval_time: 16m
+        alertname: TodogiReminderSchedulerStalled
+        exp_alerts:
+          - exp_labels: { severity: critical, project: todogi }
+            exp_annotations:
+              summary: "todogi reminder_scheduler 11m 0s önce başarılı oldu (hatırlatmalar yazılmıyor)"
+              runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogireminderschedulerstalled
+
+  - name: TodogiNotificationQueueBacklog — 1.000 üstü 10 dk
+    interval: 1m
+    input_series:
+      - series: 'todogi_notification_queue_depth{namespace="todogi-worker", status="queued"}'
+        values: '500x5 1500x20'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: TodogiNotificationQueueBacklog
+        exp_alerts: []
+      - eval_time: 20m
+        alertname: TodogiNotificationQueueBacklog
+        exp_alerts:
+          - exp_labels: { severity: warning, project: todogi }
+            exp_annotations:
+              summary: "todogi: gönderilmeyi bekleyen 1500 bildirim (eşik 1.000)"
+              runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todoginotificationqueuebacklog

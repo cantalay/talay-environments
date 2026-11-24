@@ -46,6 +46,7 @@ spec:
           expr: |
             (time() - max by (exported_job) (todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job="nudge_evaluator"})) > 300
             or (time() - max by (exported_job) (todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job="cash_shortfall"})) > 900
+            or (time() - max by (exported_job) (todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job=~"notification_dispatcher|payment_notifier|nudge_dispatcher|device_sync"})) > 300
             or (time() - max by (exported_job) (todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job=~"invite_expiry|subscription_renewal"})) > 10800
             or (time() - max by (exported_job) (todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job=~"cleanup|rate_catalog"})) > 259200
           for: 15m
@@ -147,7 +148,7 @@ spec:
             summary: "todogi outbox: yayımlanmamış olay 60 sn'den eski (yayımcı ya da Redis)"
             runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogioutboxbacklog
 
-    # İP-19 bildirim gönderimi. Metrik İP-19 ile gelir; o zamana kadar seri yok → alarm üretmez (GZ6).
+    # İP-19 bildirim gönderimi. notify yapılandırılmamışsa bildirim işleri kayıtlı değil → seri yok → alarm üretmez (GZ6).
     - name: todogi-notify
       rules:
         - alert: TodogiNotifyFailing
@@ -162,3 +163,28 @@ spec:
           annotations:
             summary: "todogi bildirimlerinin {{ $value | humanizePercentage }}'i notify'a iletilemedi (15 dk)"
             runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todoginotifyfailing
+        # İP-19 §10: planlanan → gönderilen p95 > 5 dk (dispatcher geride ya da notify yavaş).
+        - alert: TodogiNotificationLag
+          expr: |
+            histogram_quantile(0.95, sum by (le) (rate(todogi_notification_dispatch_lag_seconds_bucket{namespace="todogi-worker"}[15m]))) > 300
+          for: 15m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi bildirim gecikmesi p95 {{ $value | humanizeDuration }} (eşik 5 dk)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todoginotificationlag
+        # Dakikalık hatırlatma zamanlayıcısı 5 dk'dır başarılı tur yapmadı (iş metriğinde `job` → `exported_job`, GZ5).
+        - alert: TodogiReminderSchedulerStalled
+          expr: |
+            (time() - max(todogi_job_last_success_timestamp_seconds{namespace="todogi-worker",exported_job="reminder_scheduler"})) > 300
+          for: 5m
+          labels: { severity: critical, project: todogi }
+          annotations:
+            summary: "todogi reminder_scheduler {{ $value | humanizeDuration }} önce başarılı oldu (hatırlatmalar yazılmıyor)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todogireminderschedulerstalled
+        - alert: TodogiNotificationQueueBacklog
+          expr: max(todogi_notification_queue_depth{namespace="todogi-worker",status="queued"}) > 1000
+          for: 10m
+          labels: { severity: warning, project: todogi }
+          annotations:
+            summary: "todogi: gönderilmeyi bekleyen {{ $value }} bildirim (eşik 1.000)"
+            runbook_url: https://github.com/cantalay/todogi-be/blob/main/docs/RUNBOOK.md#todoginotificationqueuebacklog
