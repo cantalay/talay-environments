@@ -7,8 +7,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-web
-  tag: "sha-12b0359"
-  digest: "sha256:848abc9f4ef91e98fb02124bbb758c96321b4bad255edfab334ec97c9f352e97"
+  tag: "sha-657f304"
+  digest: "sha256:9f60942e94c36463648dffc732db1b1d7f5431854b502769f588271baa3d1818"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -23,7 +23,7 @@ runtimeConfig:
   WS_URL: wss://api.todogi.net/v1/ws
   AUTH_URL: https://auth.cantalay.com
   AUTH_REALM: todogi
-  BUILD_ID: "sha-12b0359"
+  BUILD_ID: "sha-657f304"
 
 nginx:
   existingConfigMap: todogi-webapp-nginx
