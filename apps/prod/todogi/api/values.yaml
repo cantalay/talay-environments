@@ -48,7 +48,12 @@ config:
   MAINTENANCE_ENABLED: "false"
   # Web istemcisinin BUILD_ID'siyle aynı tutulur (webapp values runtimeConfig.BUILD_ID): farklıysa "yeni sürüm hazır" şeridi.
   WEB_BUILD_ID: "sha-545292e"
-  UPDATES_ENABLED: "false"
+  UPDATES_ENABLED: "true"
+  # İP-24 OTA: imza anahtarı ve yayın belirteçleri Vault apps/todogi/api (UPDATES_CODE_SIGNING_KEY, UPDATES_PUBLISH_TOKENS)
+  UPDATES_PUBLIC_URL: https://api.todogi.net/updates
+  UPDATES_CHANNELS: production,preview
+  UPDATES_CODE_SIGNING_KEYID: main
+  UPDATES_CODE_SIGNING_CERT_SHA256: "0d0b45165ab17db3fb8e5fc0839006eb043c7f272828941565157a0488e956fa"
   # İP-16: borç araçları, varlıklar (kur servisi ilk çekimden sonra görünür), yıllık şablonlar
   APP_FLAGS: '{"finance.debtTools":true,"finance.assets":true,"finance.annualTemplates":true}'
   OTEL_NODE_DISABLED_INSTRUMENTATIONS: fs,dns,net
@@ -56,7 +61,7 @@ config:
 
 # Vault'a yeni sır eklenince pod env'i yenilensin diye artırılır (ExternalSecret secret'ı günceller ama pod yeniden başlamaz).
 podAnnotations:
-  talay.io/secrets-rev: "2026-11-24-notify"
+  talay.io/secrets-rev: "2026-11-25-ota"
 
 externalSecret:
   enabled: true
