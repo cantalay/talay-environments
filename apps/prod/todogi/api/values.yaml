@@ -47,7 +47,7 @@ config:
   APP_LATEST_VERSION_ANDROID: "1.0.0"
   MAINTENANCE_ENABLED: "false"
   # Web istemcisinin BUILD_ID'siyle aynı tutulur (webapp values runtimeConfig.BUILD_ID): farklıysa "yeni sürüm hazır" şeridi.
-  WEB_BUILD_ID: "sha-7909a3a"
+  WEB_BUILD_ID: "sha-545292e"
   UPDATES_ENABLED: "false"
   # İP-16: borç araçları, varlıklar (kur servisi ilk çekimden sonra görünür), yıllık şablonlar
   APP_FLAGS: '{"finance.debtTools":true,"finance.assets":true,"finance.annualTemplates":true}'
