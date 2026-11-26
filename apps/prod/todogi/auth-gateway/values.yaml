@@ -4,8 +4,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cantalay/todogi-auth-gateway
-  tag: "sha-006cdb0"
-  digest: "sha256:3239e74be4df0811d2162e97f771b9b25f1685faa23eb4223f65a502df66affc"
+  tag: "sha-1802961"
+  digest: "sha256:c5bff7caa60e3c6c903fd6d4fec5ef5c8be89f93f8bf14e379298d468fa04c30"
   pullPolicy: IfNotPresent
 
 registrySecret:
@@ -51,6 +51,8 @@ config:
   GATEWAY_MAIL_REALMS_TODOGI_FROM: "noreply@todogi.net"
   GATEWAY_MAIL_REALMS_TODOGI_RESETURL: "https://todogi.net/reset-password"
   GATEWAY_MAIL_REALMS_TODOGI_VERIFYURL: "https://todogi.net/verify-email"
+  # Google / Apple ile açılan yeni hesaba da hoş geldin e-postası (auth-gateway #8).
+  GATEWAY_MAIL_REALMS_TODOGI_SOCIALWELCOME: "true"
   CORS_ALLOWED_ORIGINS: "https://todogi.net,https://vita-pick.com,https://admin.vita-pick.com,https://finance.cantalay.com,https://admin.colonycon.art,https://notify.cantalay.com,https://telatv.net,https://admin.telatv.net,https://tela.cantalay.com,https://admin.tela.cantalay.com"
 
 externalSecret:
