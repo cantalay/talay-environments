@@ -55,7 +55,7 @@ config:
   UPDATES_CODE_SIGNING_KEYID: main
   UPDATES_CODE_SIGNING_CERT_SHA256: "0d0b45165ab17db3fb8e5fc0839006eb043c7f272828941565157a0488e956fa"
   # İP-16: borç araçları, varlıklar (kur servisi ilk çekimden sonra görünür), yıllık şablonlar
-  APP_FLAGS: '{"finance.debtTools":true,"finance.assets":true,"finance.annualTemplates":true,"socialGoogle":true,"socialApple":true}'
+  APP_FLAGS: '{"finance.debtTools":true,"finance.assets":true,"finance.annualTemplates":true,"socialGoogle":true,"socialApple":true,"finance.foreignCurrency":true}'
   OTEL_NODE_DISABLED_INSTRUMENTATIONS: fs,dns,net
   OTEL_NODE_RESOURCE_DETECTORS: env,host,os,process,serviceinstance
 
